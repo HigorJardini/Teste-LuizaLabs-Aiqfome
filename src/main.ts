@@ -38,7 +38,10 @@ async function bootstrap() {
   await app.swagger();
 
   const { PORT } = getEnv();
-  await app.listen({ port: PORT });
+  await app.listen({
+    port: PORT,
+    host: "0.0.0.0",
+  });
 
   console.log(`Server rodando na porta ${PORT}`);
   console.log(`Swagger disponível em http://localhost:${PORT}/docs`);
