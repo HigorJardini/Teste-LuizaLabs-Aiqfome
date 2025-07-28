@@ -1,0 +1,39 @@
+erDiagram
+  UserLogins {
+    bigint login_id PK
+    string username
+    string password
+    boolean status
+    timestamp created_at
+    timestamp updated_at
+  }
+
+  Users {
+    int user_id PK
+    string name
+  }
+
+  Uploads {
+    int upload_id PK
+    bigint login_id FK
+    datetime uploaded_at
+  }
+
+  Orders {
+    int order_id PK
+    date purchase_date
+    decimal total
+    int user_id FK
+    int upload_id FK
+  }
+
+  Products {
+    int product_id PK
+    decimal value
+    int order_id FK
+  }
+
+  UserLogins ||--o{ Uploads : performs
+  Uploads ||--o{ Orders : imports
+  Users ||--o{ Orders : places
+  Orders ||--o{ Products : contains

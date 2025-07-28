@@ -1,0 +1,9 @@
+flowchart TD
+A[POST /upload] --> B[Recebe o arquivo texto]
+B --> C[Processa e normaliza os dados]
+C --> D[Salva em memória ou em arquivo]
+D --> E[GET /orders]
+E --> F[Retorna todos os pedidos normalizados]
+
+E -->|?order_id=123| G[Filtra por id do pedido]
+E -->|?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD| H[Filtra por intervalo de datas]
