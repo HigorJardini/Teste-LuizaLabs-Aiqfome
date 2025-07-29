@@ -2,6 +2,8 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -12,13 +14,19 @@
       "@routes": ["interfaces/api/routes/index.ts"],
       "@controllers": ["interfaces/api/controllers/index.ts"],
       "@factories": ["interfaces/api/factories/index.ts"],
+      "@middlewares": ["interfaces/api/middlewares/index.ts"],
       "@usecases": ["domain/usecases/index.ts"],
       "@entities": ["domain/entities/index.ts"],
+      "@repositories-entities": ["domain/repositories/index.ts"],
+      "@database-entities": ["infrastructure/database/entities/index.ts"],
+      "@database-repositories": ["infrastructure/repositories/index.ts"],
+      "@database-connection": ["infrastructure/repositories/connection/pg.ts"],
       "@dtos": ["application/dtos/index.ts"],
       "@infra": ["infrastructure/index.ts"],
       "@types": ["utils/types/index.ts"],
-      "@config/*": ["utils/shared/config/*"]
+      "@config/*": ["utils/shared/config/*"],
+      "@schemas": ["utils/shared/schemas/index.ts"]
     }
   },
-  "include": ["src"]
+  "include": ["src/**/*.ts"]
 }

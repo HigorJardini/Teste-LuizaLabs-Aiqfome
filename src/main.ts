@@ -1,11 +1,15 @@
+import "reflect-metadata";
 import Fastify from "fastify";
 import swagger from "@fastify/swagger";
 import swaggerUI from "@fastify/swagger-ui";
 import { getEnv } from "@config/env";
 import { registerRoutes } from "@config/routes";
+import { initializeDatabase } from "@database-connection";
 
 async function bootstrap() {
   const app = Fastify({ logger: true });
+
+  await initializeDatabase();
 
   await app.register(swagger, {
     openapi: {
