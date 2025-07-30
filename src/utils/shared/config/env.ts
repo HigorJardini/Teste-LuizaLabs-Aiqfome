@@ -14,6 +14,9 @@ export interface EnvConfig {
   DB_PASSWORD: string;
   DB_NAME: string;
   JWT_SECRET: string;
+  UPLOAD_FILE_SIZE_LIMIT: number; // em bytes
+  UPLOAD_MAX_FILES: number;
+  UPLOAD_FIELD_SIZE: number;
 }
 
 const env: EnvConfig = {
@@ -25,6 +28,11 @@ const env: EnvConfig = {
   DB_PASSWORD: process.env.DB_PASSWORD || "password",
   DB_NAME: process.env.DB_NAME || "database",
   JWT_SECRET: process.env.JWT_SECRET || "jwt_secret",
+  UPLOAD_FILE_SIZE_LIMIT: parseInt(
+    process.env.UPLOAD_FILE_SIZE_LIMIT || String(5 * 1024 * 1024)
+  ), // 5MB
+  UPLOAD_MAX_FILES: parseInt(process.env.UPLOAD_MAX_FILES || "10"),
+  UPLOAD_FIELD_SIZE: parseInt(process.env.UPLOAD_FIELD_SIZE || "100"),
 };
 
 export function getEnv(): EnvConfig {

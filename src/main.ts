@@ -24,13 +24,17 @@ async function bootstrap() {
   try {
     console.log("Starting application...");
 
+    const env = getEnv();
+
     console.log("Initializing database...");
     await initializeDatabase();
     console.log("Database initialized successfully");
 
     app.register(multipart, {
       limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB
+        fileSize: env.UPLOAD_FILE_SIZE_LIMIT,
+        files: env.UPLOAD_MAX_FILES,
+        fieldSize: env.UPLOAD_FIELD_SIZE,
       },
       attachFieldsToBody: false,
     });

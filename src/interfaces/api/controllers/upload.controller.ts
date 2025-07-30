@@ -11,45 +11,64 @@ export class UploadController {
   ): Promise<void> {
     try {
       const loginId = request.user.sub;
+      const parts = request.parts();
 
-      const data = await request.file();
-      if (!data) {
-        reply.status(400).send({ message: "No file uploaded" });
-        return;
+      const results = [];
+      let processedFiles = 0;
+      let errorFiles = 0;
+
+      for await (const part of parts) {
+        if (part.type === "file") {
+          try {
+            console.log(`Processing file: ${part.filename}`);
+
+            const fileUpload: FileUploadDTO = {
+              filename: part.filename || "upload.txt",
+              buffer: await part.toBuffer(),
+              mimetype: part.mimetype || "text/plain",
+            };
+
+            if (
+              !fileUpload.mimetype.includes("text") &&
+              !fileUpload.mimetype.includes("csv") &&
+              !fileUpload.mimetype.includes("octet-stream")
+            ) {
+              console.error(`Invalid file type: ${fileUpload.mimetype}`);
+              errorFiles++;
+              continue;
+            }
+
+            const result = await this.processFileUseCase.execute(
+              fileUpload,
+              loginId
+            );
+            results.push(result);
+            processedFiles++;
+          } catch (error) {
+            console.error(`Error processing file ${part.filename}:`, error);
+            errorFiles++;
+          }
+        }
       }
 
-      const fileUpload: FileUploadDTO = {
-        filename: data.filename || "upload.txt",
-        buffer: await data.toBuffer(),
-        mimetype: data.mimetype || "text/plain",
-      };
-
-      if (
-        !fileUpload.mimetype.includes("text") &&
-        !fileUpload.mimetype.includes("csv") &&
-        !fileUpload.mimetype.includes("octet-stream")
-      ) {
+      if (processedFiles === 0 && errorFiles > 0) {
         reply.status(400).send({
-          message: "Invalid file type. Expected text file.",
+          message: "Failed to process any files. Please check file formats.",
+          processed: 0,
+          errors: errorFiles,
         });
         return;
       }
 
-      const result = await this.processFileUseCase.execute(fileUpload, loginId);
-
-      reply.status(201).send(result);
+      reply.status(201).send({
+        message: `Successfully processed ${processedFiles} files${errorFiles > 0 ? `, ${errorFiles} failed` : ""}`,
+        processed: processedFiles,
+        errors: errorFiles,
+        files: results,
+      });
     } catch (error: any) {
-      console.error("Error processing file:", error);
-
-      if (error.message && error.message.includes("Invalid")) {
-        reply.status(400).send({
-          message: "Invalid file format. Please check the file structure.",
-          error: error.message,
-        });
-        return;
-      }
-
-      reply.status(500).send({ message: "Error processing file" });
+      console.error("Error processing files:", error);
+      reply.status(500).send({ message: "Error processing files" });
     }
   }
 }

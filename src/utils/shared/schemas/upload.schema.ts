@@ -8,17 +8,29 @@ export const uploadSchema = {
     201: {
       type: "object",
       properties: {
-        upload_id: { type: "number" },
-        filename: { type: "string" },
-        uploaded_at: { type: "string", format: "date-time" },
-        processed_records: { type: "number" },
+        message: { type: "string" },
+        processed: { type: "number" },
+        errors: { type: "number" },
+        files: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              upload_id: { type: "number" },
+              filename: { type: "string" },
+              uploaded_at: { type: "string", format: "date-time" },
+              processed_records: { type: "number" },
+            },
+          },
+        },
       },
     },
     400: {
       type: "object",
       properties: {
         message: { type: "string" },
-        error: { type: "string" },
+        processed: { type: "number" },
+        errors: { type: "number" },
       },
     },
     401: {
