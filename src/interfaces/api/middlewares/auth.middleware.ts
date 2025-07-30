@@ -36,12 +36,10 @@ export async function authMiddleware(
       if (typeof decoded !== "string" && "username" in decoded) {
         user = await userRepository.findByUsername(decoded.username);
 
-        // Usuário não encontrado
         if (!user) {
           return sendAuthError();
         }
 
-        // Usuário encontrado, mas inativo
         if (!user.status) {
           return sendAuthError();
         }

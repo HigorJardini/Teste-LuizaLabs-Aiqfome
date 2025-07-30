@@ -1,6 +1,12 @@
 import { DataSource } from "typeorm";
 import { getEnv } from "@config/env";
-import { UserLoginTypeORMEntity, UserTypeORMEntity } from "@database-entities";
+import {
+  UserTypeORMEntity,
+  OrderTypeORMEntity,
+  ProductTypeORMEntity,
+  UploadTypeORMEntity,
+  UserLoginTypeORMEntity,
+} from "@database-entities";
 
 const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME } = getEnv();
 
@@ -13,7 +19,13 @@ export const AppDataSource = new DataSource({
   database: DB_NAME,
   synchronize: false,
   logging: true,
-  entities: [UserLoginTypeORMEntity, UserTypeORMEntity],
+  entities: [
+    UserTypeORMEntity,
+    OrderTypeORMEntity,
+    ProductTypeORMEntity,
+    UploadTypeORMEntity,
+    UserLoginTypeORMEntity,
+  ],
   migrations: ["src/infrastructure/database/migrations/**/*.ts"],
 });
 

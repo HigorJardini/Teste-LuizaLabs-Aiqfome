@@ -1,0 +1,66 @@
+@baseUrl = http://localhost:3004
+@authToken = {{login.response.body.token}}
+
+### Register a new user
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "johndoe",
+  "password": "securePassword123",
+  "name": "John Doe"
+}
+
+### Login with user credentials
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "johndoe",
+  "password": "securePassword123"
+}
+
+### Upload file with orders data
+# @name upload
+POST {{baseUrl}}/upload
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="orders.txt"
+Content-Type: text/plain
+
+< ./data_1.txt
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Get all orders
+# @name getAllOrders
+GET {{baseUrl}}/orders
+Authorization: Bearer {{authToken}}
+
+### Get order by ID
+# @name getOrderById
+GET {{baseUrl}}/orders?order_id=753
+Authorization: Bearer {{authToken}}
+
+### Get orders by date range
+# @name getOrdersByDateRange
+GET {{baseUrl}}/orders?start_date=2021-01-01&end_date=2021-12-31
+Authorization: Bearer {{authToken}}
+
+### Get orders by user
+# @name getOrdersByUser
+GET {{baseUrl}}/orders?user_id=70
+Authorization: Bearer {{authToken}}
+
+### Get orders with pagination
+# @name getOrdersPaginated
+GET {{baseUrl}}/orders?page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+### Get orders with combined filters
+# @name getOrdersWithFilters
+GET {{baseUrl}}/orders?start_date=2021-01-01&end_date=2021-12-31&user_id=70&page=1&limit=5
+Authorization: Bearer {{authToken}}

@@ -9,19 +9,20 @@ CREATE TABLE UserLogins (
 );
 
 CREATE TABLE Users (
-    user_id SERIAL PRIMARY KEY,
+    user_id INT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Uploads (
     upload_id SERIAL PRIMARY KEY,
     login_id BIGINT NOT NULL,
+    filename VARCHAR(255),
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (login_id) REFERENCES UserLogins(login_id)
 );
 
 CREATE TABLE Orders (
-    order_id SERIAL PRIMARY KEY,
+    order_id INT PRIMARY KEY,
     purchase_date DATE NOT NULL,
     total DECIMAL(10, 2) NOT NULL,
     user_id INT NOT NULL,
@@ -56,3 +57,24 @@ CREATE INDEX idx_uploads_login_id ON Uploads(login_id);
 CREATE INDEX idx_orders_user_id ON Orders(user_id);
 CREATE INDEX idx_orders_upload_id ON Orders(upload_id);
 CREATE INDEX idx_products_order_id ON Products(order_id);
+
+-- Criar sequência para uso opcional quando não for especificado um ID
+CREATE SEQUENCE users_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+-- Criar sequência para uso opcional quando não for especificado um ID
+CREATE SEQUENCE orders_order_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+-- Definir valor padrão para a coluna user_id
+ALTER TABLE Users ALTER COLUMN user_id SET DEFAULT nextval('users_user_id_seq'::regclass);
+-- Definir valor padrão para a coluna order_id
+ALTER TABLE Orders ALTER COLUMN order_id SET DEFAULT nextval('orders_order_id_seq'::regclass);

@@ -25,8 +25,11 @@
       "@infra": ["infrastructure/index.ts"],
       "@types": ["utils/types/index.ts"],
       "@config/*": ["utils/shared/config/*"],
-      "@schemas": ["utils/shared/schemas/index.ts"]
-    }
+      "@schemas": ["utils/shared/schemas/index.ts"],
+      "@parsers/*": ["utils/shared/parsers/*"],
+      "types": ["utils/types/index.ts"]
+    },
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": ["src/**/*.ts"]
 }
