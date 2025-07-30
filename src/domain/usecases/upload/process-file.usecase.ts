@@ -272,6 +272,40 @@ export class ProcessFileUseCase {
         `Successfully created ${savedCount} products out of ${allProducts.length}`
       );
 
+      // Recalcular o total dos pedidos com base nos produtos
+      console.log("Updating order totals based on products...");
+      const updatedOrderIds = new Set<number>();
+
+      // Coletar todos os IDs de pedidos que receberam produtos
+      for (const product of allProducts) {
+        updatedOrderIds.add(product.order_id);
+      }
+
+      console.log(`Recalculating totals for ${updatedOrderIds.size} orders...`);
+
+      // Atualizar cada pedido com o total correto
+      for (const orderId of updatedOrderIds) {
+        try {
+          // Buscar todos os produtos do pedido
+          const products = await this.productRepository.findByOrderId(orderId);
+
+          // Calcular o total correto somando os valores de todos os produtos
+          const total = products.reduce(
+            (sum, product) => sum + Number(product.value),
+            0
+          );
+
+          // Atualizar o pedido com o total correto
+          await this.orderRepository.updateTotal(orderId, total);
+
+          console.log(
+            `Updated order ${orderId} total to ${total} based on ${products.length} products`
+          );
+        } catch (error) {
+          console.error(`Error updating total for order ${orderId}:`, error);
+        }
+      }
+
       const sampleOrderIds = Array.from(ordersMap.keys()).slice(0, 5);
       for (const orderId of sampleOrderIds) {
         const products = await this.productRepository.findByOrderId(

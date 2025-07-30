@@ -283,4 +283,14 @@ export class TypeORMOrderRepository implements OrderRepository {
       throw error;
     }
   }
+
+  async updateTotal(order_id: number, total: number): Promise<void> {
+    try {
+      await this.repository.update({ order_id }, { total });
+      console.log(`Updated order ${order_id} total to ${total}`);
+    } catch (error) {
+      console.error(`Error updating total for order ${order_id}:`, error);
+      throw error;
+    }
+  }
 }

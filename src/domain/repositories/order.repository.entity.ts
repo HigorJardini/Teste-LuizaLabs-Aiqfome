@@ -13,4 +13,5 @@ export interface OrderRepository {
   ): Promise<{ orders: OrderEntity[]; count: number }>;
   createMany(orders: OrderEntity[]): Promise<OrderEntity[]>;
   modifyOrdersTable(): Promise<void>;
+  updateTotal(order_id: number, total: number): Promise<void>;
 }
