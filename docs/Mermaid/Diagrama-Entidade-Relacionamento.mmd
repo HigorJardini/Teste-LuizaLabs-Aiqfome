@@ -16,19 +16,20 @@ erDiagram
   Uploads {
     int upload_id PK
     bigint login_id FK
+    string filename
     datetime uploaded_at
   }
 
   Orders {
     int order_id PK
+    int user_id FK
     date purchase_date
     decimal total
-    int user_id FK
     int upload_id FK
   }
 
   Products {
-    int product_id PK
+    serial product_id PK "Auto-incremento"
     decimal value
     int order_id FK
   }

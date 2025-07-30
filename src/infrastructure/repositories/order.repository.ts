@@ -86,11 +86,19 @@ export class TypeORMOrderRepository implements OrderRepository {
   async findById(order_id: number): Promise<OrderEntity | null> {
     try {
       console.log(`Finding order with ID: ${order_id}`);
-      const order = await this.repository.findOne({ where: { order_id } });
+      const order = await this.repository.findOne({
+        where: { order_id },
+        relations: {
+          user: true,
+          products: true,
+        },
+      });
+
       if (!order) {
         console.log(`Order with ID ${order_id} not found`);
         return null;
       }
+
       return {
         order_id: order.order_id,
         purchase_date: order.purchase_date ?? new Date(),
@@ -139,12 +147,17 @@ export class TypeORMOrderRepository implements OrderRepository {
     } else if (end_date) {
       whereClause.purchase_date = Between(new Date(0), new Date(end_date));
     }
+
     const [orders, count] = await this.repository.findAndCount({
       where: whereClause,
       skip: (page - 1) * limit,
       take: limit,
       order: {
         purchase_date: "DESC",
+      },
+      relations: {
+        user: true,
+        products: true,
       },
     });
 
@@ -155,6 +168,18 @@ export class TypeORMOrderRepository implements OrderRepository {
         total: order.total ?? 0,
         user_id: order.user_id ?? 0,
         upload_id: order.upload_id ?? 0,
+        user: order.user
+          ? {
+              user_id: order.user.user_id,
+              name: order.user.name,
+            }
+          : undefined,
+        products: order.products
+          ? order.products.map((product) => ({
+              product_id: product.product_id,
+              value: product.value,
+            }))
+          : [],
       })),
       count,
     };
@@ -171,6 +196,10 @@ export class TypeORMOrderRepository implements OrderRepository {
               OrderTypeORMEntity,
               {
                 where: { order_id: order.order_id },
+                relations: {
+                  user: true,
+                  products: true,
+                },
               }
             );
 
@@ -192,6 +221,17 @@ export class TypeORMOrderRepository implements OrderRepository {
           );
           const savedOrder = await transactionalEntityManager.save(newOrder);
 
+          const completeOrder = await transactionalEntityManager.findOne(
+            OrderTypeORMEntity,
+            {
+              where: { order_id: savedOrder.order_id },
+              relations: {
+                user: true,
+                products: true,
+              },
+            }
+          );
+
           savedOrders.push({
             order_id: savedOrder.order_id,
             purchase_date: savedOrder.purchase_date ?? new Date(),
@@ -204,5 +244,43 @@ export class TypeORMOrderRepository implements OrderRepository {
     );
 
     return savedOrders;
+  }
+
+  async findByIdAndUserId(
+    order_id: number,
+    user_id: number
+  ): Promise<OrderEntity | null> {
+    try {
+      console.log(`Finding order with ID: ${order_id} for user: ${user_id}`);
+      const order = await this.repository.findOne({
+        where: {
+          order_id,
+          user_id,
+        },
+        relations: {
+          user: true,
+          products: true,
+        },
+      });
+
+      if (!order) {
+        console.log(`Order with ID ${order_id} for user ${user_id} not found`);
+        return null;
+      }
+
+      return {
+        order_id: order.order_id,
+        purchase_date: order.purchase_date ?? new Date(),
+        total: order.total ?? 0,
+        user_id: order.user_id ?? 0,
+        upload_id: order.upload_id ?? 0,
+      };
+    } catch (error) {
+      console.error(
+        `Error finding order by ID ${order_id} and user ID ${user_id}:`,
+        error
+      );
+      throw error;
+    }
   }
 }

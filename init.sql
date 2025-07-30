@@ -58,7 +58,7 @@ CREATE INDEX idx_orders_user_id ON Orders(user_id);
 CREATE INDEX idx_orders_upload_id ON Orders(upload_id);
 CREATE INDEX idx_products_order_id ON Products(order_id);
 
--- Criar sequência para uso opcional quando não for especificado um ID
+-- Criar sequências para uso opcional quando não for especificado um ID
 CREATE SEQUENCE users_user_id_seq
     START WITH 1
     INCREMENT BY 1
@@ -66,7 +66,6 @@ CREATE SEQUENCE users_user_id_seq
     NO MAXVALUE
     CACHE 1;
 
--- Criar sequência para uso opcional quando não for especificado um ID
 CREATE SEQUENCE orders_order_id_seq
     START WITH 1
     INCREMENT BY 1
@@ -74,7 +73,9 @@ CREATE SEQUENCE orders_order_id_seq
     NO MAXVALUE
     CACHE 1;
 
--- Definir valor padrão para a coluna user_id
+-- Definir valores padrão para colunas que usam sequências
 ALTER TABLE Users ALTER COLUMN user_id SET DEFAULT nextval('users_user_id_seq'::regclass);
--- Definir valor padrão para a coluna order_id
 ALTER TABLE Orders ALTER COLUMN order_id SET DEFAULT nextval('orders_order_id_seq'::regclass);
+
+-- Ajustar a tabela Orders para incluir um índice único na combinação (order_id, user_id)
+CREATE UNIQUE INDEX idx_unique_order_user ON Orders(order_id, user_id);

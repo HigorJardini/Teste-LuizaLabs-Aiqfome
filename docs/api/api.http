@@ -1,4 +1,4 @@
-@baseUrl = http://localhost:3004
+@baseUrl = http://localhost:3005
 @authToken = {{login.response.body.token}}
 
 ### Register a new user
@@ -9,7 +9,7 @@ Content-Type: application/json
 {
   "username": "magalu",
   "password": "securePassword123",
-  "name": "Magazine Luiza",
+  "name": "Magazine Luiza"
 }
 
 ### Login with user credentials
@@ -47,7 +47,7 @@ Authorization: Bearer {{authToken}}
 
 ### Get order by ID
 # @name getOrderById
-GET {{baseUrl}}/orders?order_id=1023
+GET {{baseUrl}}/orders?order_id=844
 Authorization: Bearer {{authToken}}
 
 ### Get orders by date range

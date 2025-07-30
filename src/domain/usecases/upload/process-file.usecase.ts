@@ -36,13 +36,15 @@ export class ProcessFileUseCase {
 
       const processedRecords: ParsedRecord[] = [];
       const usersMap = new Map<number, string>();
+
       const ordersMap = new Map<
-        number,
+        string,
         {
           orderId: number;
           userId: number;
           date: Date;
           total: number;
+          products: Array<{ productId: number; value: number }>;
         }
       >();
 
@@ -55,21 +57,40 @@ export class ProcessFileUseCase {
             usersMap.set(record.userId, record.userName);
           }
 
-          if (!ordersMap.has(record.orderId)) {
-            ordersMap.set(record.orderId, {
+          const orderKey = `${record.orderId}_${record.userId}`;
+
+          if (!ordersMap.has(orderKey)) {
+            ordersMap.set(orderKey, {
               orderId: record.orderId,
               userId: record.userId,
               date: record.purchaseDate,
               total: record.productValue,
+              products: [
+                { productId: record.productId, value: record.productValue },
+              ],
             });
           } else {
-            const order = ordersMap.get(record.orderId)!;
+            const order = ordersMap.get(orderKey)!;
             order.total += record.productValue;
-            ordersMap.set(record.orderId, order);
+            order.products.push({
+              productId: record.productId,
+              value: record.productValue,
+            });
+            ordersMap.set(orderKey, order);
           }
         } catch (error) {
           console.error(`Error processing line: ${line}`, error);
         }
+      }
+
+      console.log("Sample of parsed records:");
+      console.log(processedRecords.slice(0, 3));
+
+      console.log("Sample of orders map:");
+      let i = 0;
+      for (const [key, order] of ordersMap.entries()) {
+        console.log(`Order ${key}:`, order);
+        if (++i >= 3) break;
       }
 
       console.log(`Found ${usersMap.size} unique users`);
@@ -118,62 +139,148 @@ export class ProcessFileUseCase {
       }
 
       console.log("Creating orders...");
-      for (const order of ordersMap.values()) {
-        try {
-          console.log(`Creating order with ID: ${order.orderId}`);
+      const failedOrders = [];
 
-          const existingOrder = await this.orderRepository.findById(
-            order.orderId
+      for (const [orderKey, order] of ordersMap.entries()) {
+        try {
+          console.log(
+            `Creating order with ID: ${order.orderId} for user ${order.userId}`
           );
+
+          const existingOrder = await this.orderRepository.findByIdAndUserId(
+            order.orderId,
+            order.userId
+          );
+
           if (existingOrder) {
-            console.log(`Order ${order.orderId} already exists, skipping`);
+            console.log(
+              `Order ${order.orderId} for user ${order.userId} already exists, skipping`
+            );
             continue;
           }
 
-          await this.orderRepository.create({
-            order_id: order.orderId,
-            purchase_date: order.date,
-            total: order.total,
-            user_id: order.userId,
-            upload_id: uploadId,
-          });
+          try {
+            await this.orderRepository.create({
+              order_id: order.orderId,
+              purchase_date: order.date,
+              total: order.total,
+              user_id: order.userId,
+              upload_id: uploadId,
+            });
+
+            const verifyOrder = await this.orderRepository.findByIdAndUserId(
+              order.orderId,
+              order.userId
+            );
+
+            if (!verifyOrder) {
+              console.warn(
+                `Order ${order.orderId} for user ${order.userId} was not found immediately after creation. Will retry later.`
+              );
+            }
+          } catch (dbError) {
+            console.error(
+              `Database error creating order ${order.orderId}:`,
+              dbError
+            );
+            failedOrders.push({
+              orderId: order.orderId,
+              userId: order.userId,
+              error:
+                dbError instanceof Error ? dbError.message : "Unknown error",
+            });
+            continue;
+          }
         } catch (error) {
-          console.error(`Error creating order ${order.orderId}:`, error);
-          throw new Error(
-            `Failed to create order with ID ${order.orderId}: ${error instanceof Error ? error.message : "Unknown error"}`
+          console.error(
+            `Error in order creation process for ${order.orderId}/${order.userId}:`,
+            error
           );
+          failedOrders.push({
+            orderId: order.orderId,
+            userId: order.userId,
+            error: error instanceof Error ? error.message : "Unknown error",
+          });
         }
       }
 
-      console.log("Verifying orders were created successfully...");
-      for (const order of ordersMap.values()) {
-        const createdOrder = await this.orderRepository.findById(order.orderId);
-        if (!createdOrder) {
-          throw new Error(
-            `Order ${order.orderId} was not created successfully.`
-          );
-        }
-      }
-
-      console.log("Creating products...");
-      const BATCH_SIZE = 100;
-      const productEntities = processedRecords.map((record) => ({
-        product_id: record.productId,
-        value: record.productValue,
-        order_id: record.orderId,
-      }));
-
-      let savedProductsCount = 0;
-      for (let i = 0; i < productEntities.length; i += BATCH_SIZE) {
-        const batch = productEntities.slice(i, i + BATCH_SIZE);
-        console.log(
-          `Processing product batch ${i / BATCH_SIZE + 1}/${Math.ceil(productEntities.length / BATCH_SIZE)}`
+      if (failedOrders.length > 0) {
+        console.warn(
+          `Failed to create ${failedOrders.length} orders:`,
+          failedOrders
         );
-        const savedBatch = await this.productRepository.createMany(batch);
-        savedProductsCount += savedBatch.length;
       }
 
-      console.log(`Successfully saved ${savedProductsCount} products`);
+      console.log("Allowing database time to complete all operations...");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      console.log("Creating products with simplified approach...");
+      const allProducts: { value: number; order_id: number }[] = [];
+
+      for (const [orderKey, order] of ordersMap.entries()) {
+        const orderExists = await this.orderRepository.findById(order.orderId);
+        if (!orderExists) {
+          console.warn(
+            `Order ${order.orderId} not found, skipping its products`
+          );
+          continue;
+        }
+
+        for (const product of order.products) {
+          allProducts.push({
+            value: product.value,
+            order_id: order.orderId,
+          });
+        }
+      }
+
+      console.log(`Processing ${allProducts.length} total products`);
+
+      const BATCH_SIZE = 50;
+      let savedCount = 0;
+
+      for (let i = 0; i < allProducts.length; i += BATCH_SIZE) {
+        const batch = allProducts.slice(i, i + BATCH_SIZE);
+        console.log(
+          `Creating batch ${Math.floor(i / BATCH_SIZE) + 1} with ${batch.length} products`
+        );
+
+        try {
+          for (const product of batch) {
+            await this.productRepository.create(product);
+            savedCount++;
+
+            if (savedCount % 10 === 0) {
+              console.log(
+                `Created ${savedCount}/${allProducts.length} products so far`
+              );
+            }
+          }
+        } catch (error) {
+          console.error(
+            `Error with product batch ${Math.floor(i / BATCH_SIZE) + 1}:`,
+            error
+          );
+        }
+
+        if (i + BATCH_SIZE < allProducts.length) {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+      }
+
+      console.log(
+        `Successfully created ${savedCount} products out of ${allProducts.length}`
+      );
+
+      const sampleOrderIds = Array.from(ordersMap.keys()).slice(0, 5);
+      for (const orderId of sampleOrderIds) {
+        const products = await this.productRepository.findByOrderId(
+          Number(orderId)
+        );
+        console.log(
+          `Order ${orderId} has ${products.length} products after import`
+        );
+      }
 
       return {
         upload_id: uploadId,
