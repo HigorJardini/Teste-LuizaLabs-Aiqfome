@@ -1,22 +1,23 @@
-export interface OrderFiltersDTO {
+export type OrderFiltersDTO = {
   order_id?: number;
+  user_id?: number;
   start_date?: string;
   end_date?: string;
-  user_id?: number;
   page?: number;
   limit?: number;
-}
+};
 
-export interface OrderResponseDTO {
+export type OrderResponseDTO = {
+  id?: number;
   order_id: number;
-  purchase_date: Date;
-  total: number;
-  user: {
+  purchase_date?: Date;
+  total?: number;
+  user?: {
     user_id: number;
     name: string;
   };
-  products: {
+  products?: {
     product_id: number;
     value: number;
   }[];
-}
+};

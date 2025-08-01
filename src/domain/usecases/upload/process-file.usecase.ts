@@ -6,6 +6,7 @@ import {
 } from "@repositories-entities";
 import { FileUploadDTO, UploadResponseDTO } from "@dtos";
 import { FileParser, ParsedRecord } from "@parsers/file-parser";
+import { ProductEntity } from "@entities";
 
 export class ProcessFileUseCase {
   constructor(
@@ -35,13 +36,15 @@ export class ProcessFileUseCase {
       console.log(`Processing ${lines.length} lines from file`);
 
       const processedRecords: ParsedRecord[] = [];
-      const usersMap = new Map<number, string>();
+
+      const usersMap = new Map<string, { userId: number; userName: string }>();
 
       const ordersMap = new Map<
         string,
         {
           orderId: number;
           userId: number;
+          userName: string;
           date: Date;
           total: number;
           products: Array<{ productId: number; value: number }>;
@@ -53,16 +56,21 @@ export class ProcessFileUseCase {
           const record = FileParser.parseFixedWidthLine(line);
           processedRecords.push(record);
 
-          if (!usersMap.has(record.userId)) {
-            usersMap.set(record.userId, record.userName);
+          const userKey = `${record.userId}_${record.userName}`;
+          if (!usersMap.has(userKey)) {
+            usersMap.set(userKey, {
+              userId: record.userId,
+              userName: record.userName,
+            });
           }
 
-          const orderKey = `${record.orderId}_${record.userId}`;
+          const orderKey = `${record.orderId}_${record.userId}_${record.userName}`;
 
           if (!ordersMap.has(orderKey)) {
             ordersMap.set(orderKey, {
               orderId: record.orderId,
               userId: record.userId,
+              userName: record.userName,
               date: record.purchaseDate,
               total: record.productValue,
               products: [
@@ -97,24 +105,36 @@ export class ProcessFileUseCase {
       console.log(`Found ${ordersMap.size} unique orders`);
 
       console.log("Creating users...");
-      for (const [userId, userName] of usersMap.entries()) {
+      for (const [userKey, userInfo] of usersMap.entries()) {
         try {
-          console.log(`Processing user ID: ${userId}, Name: ${userName}`);
-          const existingUser = await this.userRepository.findById(userId);
+          console.log(
+            `Processing user ID: ${userInfo.userId}, Name: ${userInfo.userName}`
+          );
+          const existingUser = await this.userRepository.findByUserId(
+            userInfo.userId,
+            userInfo.userName
+          );
 
           if (!existingUser) {
-            console.log(`Creating new user with ID: ${userId}`);
+            console.log(
+              `Creating new user with ID: ${userInfo.userId}, Name: ${userInfo.userName}`
+            );
             await this.userRepository.create({
-              user_id: userId,
-              name: userName,
+              user_id: userInfo.userId,
+              name: userInfo.userName,
             });
           } else {
-            console.log(`User ID: ${userId} already exists`);
+            console.log(
+              `User ID: ${userInfo.userId}, Name: ${userInfo.userName} already exists`
+            );
           }
         } catch (error) {
-          console.error(`Error creating/updating user ${userId}:`, error);
+          console.error(
+            `Error creating/updating user ${userInfo.userId}/${userInfo.userName}:`,
+            error
+          );
           throw new Error(
-            `Failed to create user with ID ${userId}: ${
+            `Failed to create user with ID ${userInfo.userId}: ${
               error instanceof Error ? error.message : "Unknown error"
             }`
           );
@@ -122,62 +142,80 @@ export class ProcessFileUseCase {
       }
 
       console.log("Verifying all users exist before creating orders...");
-      for (const [userId] of usersMap.entries()) {
-        const user = await this.userRepository.findById(userId);
+      for (const [userKey, userInfo] of usersMap.entries()) {
+        const user = await this.userRepository.findByUserId(
+          userInfo.userId,
+          userInfo.userName
+        );
+
         if (!user) {
           throw new Error(
-            `User with ID ${userId} could not be found after creation attempt. Cannot proceed with orders.`
+            `User with ID ${userInfo.userId} and Name ${userInfo.userName} could not be found after creation attempt. Cannot proceed with orders.`
           );
         }
       }
 
-      console.log("Modifying Orders table to accept specific IDs...");
-      try {
-        await this.orderRepository.modifyOrdersTable();
-      } catch (error) {
-        console.error("Error modifying Orders table:", error);
-      }
-
       console.log("Creating orders...");
       const failedOrders = [];
+      const createdOrders = new Map<
+        string,
+        { id: number; order_id: number; user_id: number }
+      >();
 
       for (const [orderKey, order] of ordersMap.entries()) {
         try {
           console.log(
-            `Creating order with ID: ${order.orderId} for user ${order.userId}`
+            `Creating order with ID: ${order.orderId} for user ${order.userId}/${order.userName}`
           );
 
-          const existingOrder = await this.orderRepository.findByIdAndUserId(
-            order.orderId,
-            order.userId
+          const user = await this.userRepository.findByUserId(
+            order.userId,
+            order.userName
           );
 
-          if (existingOrder) {
-            console.log(
-              `Order ${order.orderId} for user ${order.userId} already exists, skipping`
+          if (!user || !user.id) {
+            console.warn(
+              `User with business ID ${order.userId} and name "${order.userName}" not found, skipping order`
             );
             continue;
           }
 
+          const existingOrder =
+            await this.orderRepository.findByOrderIdAndUserTableId(
+              order.orderId,
+              user.id
+            );
+
+          if (existingOrder) {
+            console.log(
+              `Order ${order.orderId} for user ${order.userId}/${order.userName} already exists, using existing`
+            );
+            createdOrders.set(orderKey, {
+              id: existingOrder.id!,
+              order_id: existingOrder.order_id,
+              user_id: order.userId,
+            });
+            continue;
+          }
+
           try {
-            await this.orderRepository.create({
+            const createdOrder = await this.orderRepository.create({
               order_id: order.orderId,
               purchase_date: order.date,
               total: order.total,
-              user_id: order.userId,
+              user_table_id: user.id,
               upload_id: uploadId,
             });
 
-            const verifyOrder = await this.orderRepository.findByIdAndUserId(
-              order.orderId,
-              order.userId
+            console.log(
+              `Created order with internal ID: ${createdOrder.id} for business order ID: ${order.orderId}`
             );
 
-            if (!verifyOrder) {
-              console.warn(
-                `Order ${order.orderId} for user ${order.userId} was not found immediately after creation. Will retry later.`
-              );
-            }
+            createdOrders.set(orderKey, {
+              id: createdOrder.id!,
+              order_id: createdOrder.order_id,
+              user_id: order.userId,
+            });
           } catch (dbError) {
             console.error(
               `Database error creating order ${order.orderId}:`,
@@ -186,6 +224,7 @@ export class ProcessFileUseCase {
             failedOrders.push({
               orderId: order.orderId,
               userId: order.userId,
+              userName: order.userName,
               error:
                 dbError instanceof Error ? dbError.message : "Unknown error",
             });
@@ -193,12 +232,13 @@ export class ProcessFileUseCase {
           }
         } catch (error) {
           console.error(
-            `Error in order creation process for ${order.orderId}/${order.userId}:`,
+            `Error in order creation process for ${order.orderId}/${order.userId}/${order.userName}:`,
             error
           );
           failedOrders.push({
             orderId: order.orderId,
             userId: order.userId,
+            userName: order.userName,
             error: error instanceof Error ? error.message : "Unknown error",
           });
         }
@@ -215,22 +255,23 @@ export class ProcessFileUseCase {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       console.log("Creating products with simplified approach...");
-      const allProducts: { value: number; order_id: number }[] = [];
+      const allProducts: ProductEntity[] = [];
 
       for (const [orderKey, order] of ordersMap.entries()) {
-        const orderExists = await this.orderRepository.findById(order.orderId);
-        if (!orderExists) {
-          console.warn(
-            `Order ${order.orderId} not found, skipping its products`
-          );
-          continue;
-        }
+        if (createdOrders.has(orderKey)) {
+          const orderInfo = createdOrders.get(orderKey)!;
 
-        for (const product of order.products) {
-          allProducts.push({
-            value: product.value,
-            order_id: order.orderId,
-          });
+          for (const product of order.products) {
+            allProducts.push({
+              product_id: product.productId,
+              value: product.value,
+              order_table_id: orderInfo.id,
+            });
+          }
+        } else {
+          console.warn(
+            `Order key ${orderKey} not found in created orders, skipping its products`
+          );
         }
       }
 
@@ -272,48 +313,38 @@ export class ProcessFileUseCase {
         `Successfully created ${savedCount} products out of ${allProducts.length}`
       );
 
-      // Recalcular o total dos pedidos com base nos produtos
       console.log("Updating order totals based on products...");
-      const updatedOrderIds = new Set<number>();
+      const updatedOrders = new Set<number>();
 
-      // Coletar todos os IDs de pedidos que receberam produtos
       for (const product of allProducts) {
-        updatedOrderIds.add(product.order_id);
+        if (product.order_table_id) {
+          updatedOrders.add(product.order_table_id);
+        }
       }
 
-      console.log(`Recalculating totals for ${updatedOrderIds.size} orders...`);
+      console.log(`Recalculating totals for ${updatedOrders.size} orders...`);
 
-      // Atualizar cada pedido com o total correto
-      for (const orderId of updatedOrderIds) {
+      for (const orderId of updatedOrders) {
         try {
-          // Buscar todos os produtos do pedido
-          const products = await this.productRepository.findByOrderId(orderId);
+          const products =
+            await this.productRepository.findByOrderTableId(orderId);
 
-          // Calcular o total correto somando os valores de todos os produtos
           const total = products.reduce(
             (sum, product) => sum + Number(product.value),
             0
           );
 
-          // Atualizar o pedido com o total correto
           await this.orderRepository.updateTotal(orderId, total);
 
           console.log(
-            `Updated order ${orderId} total to ${total} based on ${products.length} products`
+            `Updated order with internal ID ${orderId} total to ${total} based on ${products.length} products`
           );
         } catch (error) {
-          console.error(`Error updating total for order ${orderId}:`, error);
+          console.error(
+            `Error updating total for order with internal ID ${orderId}:`,
+            error
+          );
         }
-      }
-
-      const sampleOrderIds = Array.from(ordersMap.keys()).slice(0, 5);
-      for (const orderId of sampleOrderIds) {
-        const products = await this.productRepository.findByOrderId(
-          Number(orderId)
-        );
-        console.log(
-          `Order ${orderId} has ${products.length} products after import`
-        );
       }
 
       return {

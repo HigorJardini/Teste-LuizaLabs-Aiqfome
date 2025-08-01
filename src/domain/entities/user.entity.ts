@@ -1,4 +1,5 @@
 export interface UserEntity {
-  user_id?: number;
+  id?: number;
+  user_id: number;
   name: string;
 }

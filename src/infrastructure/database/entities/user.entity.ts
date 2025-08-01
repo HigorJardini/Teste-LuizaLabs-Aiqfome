@@ -3,7 +3,10 @@ import { OrderTypeORMEntity } from "@database-entities";
 
 @Entity("users")
 export class UserTypeORMEntity {
-  @PrimaryGeneratedColumn({ name: "user_id", type: "int" })
+  @PrimaryGeneratedColumn({ name: "id" })
+  id?: number;
+
+  @Column({ name: "user_id", type: "int" })
   user_id?: number;
 
   @Column({ name: "name", type: "varchar", length: 255 })

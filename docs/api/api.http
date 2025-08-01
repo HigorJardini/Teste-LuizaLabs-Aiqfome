@@ -1,4 +1,4 @@
-@baseUrl = http://localhost:3005
+@baseUrl = http://localhost:3004
 @authToken = {{login.response.body.token}}
 
 ### Register a new user
@@ -57,7 +57,7 @@ Authorization: Bearer {{authToken}}
 
 ### Get orders by user
 # @name getOrdersByUser
-GET {{baseUrl}}/orders?user_id=111
+GET {{baseUrl}}/orders?user_id=90
 Authorization: Bearer {{authToken}}
 
 ### Get orders with pagination

@@ -1,5 +1,6 @@
-export interface ProductEntity {
-  product_id?: number;
+export type ProductEntity = {
+  id?: number;
+  product_id: number;
   value: number;
-  order_id: number;
-}
+  order_table_id?: number;
+};

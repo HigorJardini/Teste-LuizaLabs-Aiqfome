@@ -1,7 +1,7 @@
 erDiagram
   UserLogins {
-    bigint login_id PK
-    string username
+    bigint login_id PK "Auto-incremento"
+    string username UK "Único"
     string password
     boolean status
     timestamp created_at
@@ -9,29 +9,33 @@ erDiagram
   }
 
   Users {
-    int user_id PK
+    serial id PK "Auto-incremento"
+    int user_id "Código de negócio (não único)"
     string name
   }
 
   Uploads {
-    int upload_id PK
+    serial id PK "Auto-incremento"
     bigint login_id FK
     string filename
     datetime uploaded_at
   }
 
   Orders {
-    int order_id PK
-    int user_id FK
+    serial id PK "Auto-incremento"
+    int order_id "Código de negócio (não único)"
     date purchase_date
     decimal total
     int upload_id FK
+    int user_table_id FK "Referência ao id da tabela Users"
+    INDEX idx_order_business "Índice composto (order_id, user_table_id)"
   }
 
   Products {
-    serial product_id PK "Auto-incremento"
+    serial id PK "Auto-incremento"
+    int product_id "Código de negócio (não único)"
     decimal value
-    int order_id FK
+    int order_table_id FK "Referência ao id da tabela Orders"
   }
 
   UserLogins ||--o{ Uploads : performs

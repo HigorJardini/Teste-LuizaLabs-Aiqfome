@@ -10,7 +10,7 @@ import { UserLoginTypeORMEntity } from "@database-entities";
 
 @Entity("uploads")
 export class UploadTypeORMEntity {
-  @PrimaryGeneratedColumn({ name: "upload_id" })
+  @PrimaryGeneratedColumn({ name: "id" })
   upload_id?: number;
 
   @Column({ name: "login_id" })
