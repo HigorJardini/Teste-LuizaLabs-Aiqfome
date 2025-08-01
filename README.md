@@ -64,6 +64,18 @@ This project is a test assignment for a position at Luiza Labs. The goal is to d
 
 ---
 
+## Sequence Diagrams
+
+![Sequence Diagram](./docs/Diagrama-Fluxo.png)
+
+To provide a better understanding of the application's flow, a sequence diagram was created using Mermaid. This diagram illustrates the interaction between different components of the system during key operations:
+
+- **File Upload Process**: Shows the complete flow from the client uploading a file to the server processing it and storing the data in the database.
+- **Order Query Process**: Illustrates how order queries are processed, including authentication, filter application, and result pagination.
+- **Authentication Flow**: Demonstrates the user registration and login processes, including JWT token generation and validation.
+
+The sequence diagram helps visualize how the system's components interact in a time-ordered sequence, making it easier to understand the system's behavior and the implementation of the clean architecture principles in practice.
+
 ## Database Diagram
 
 ![Database Diagram](./docs/Diagrama-Entidade-Relacionamento.png)
@@ -217,6 +229,18 @@ Este projeto é um teste para uma vaga na Luiza Labs. O objetivo é demonstrar m
 - **Docker Compose**: 3.x
 
 ---
+
+## Diagramas de Sequência
+
+![Sequence Diagram](./docs/Diagrama-Fluxo.png)
+
+Para fornecer uma melhor compreensão do fluxo da aplicação, foi criado um diagrama de sequência usando Mermaid. Esse diagrama ilustra a interação entre os diferentes componentes do sistema durante operações-chave:
+
+- **Processo de Upload de Arquivo**: Mostra o fluxo completo desde o cliente enviando um arquivo até o servidor processá-lo e armazenar os dados no banco de dados.
+- **Processo de Consulta de Pedidos**: Ilustra como as consultas de pedidos são processadas, incluindo autenticação, aplicação de filtros e paginação de resultados.
+- **Fluxo de Autenticação**: Demonstra os processos de registro e login do usuário, incluindo geração e validação de tokens JWT.
+
+O diagrama de sequência ajuda a visualizar como os componentes do sistema interagem em uma sequência ordenada por tempo, facilitando a compreensão do comportamento do sistema e a implementação dos princípios de arquitetura limpa na prática.
 
 ## Diagrama do Banco de Dados
 
