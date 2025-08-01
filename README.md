@@ -138,7 +138,7 @@ To perform optional cleanup and avoid potential conflicts, you can run the follo
       - Removes `node_modules` and `dist` directories if they exist.
       - Prompts for confirmation to clean Docker cache using docker `system prune -f`.
       - Provides options for cleaning Docker images and volumes if needed.
-      - ![Docker Clear Option](./public/Docker-Clear-Option-Linux.png)
+      - ![Docker Clear Option](./public/Docker-Clear-Option-Linux-Cmd.png)
 - **Windows**:
   - You can use the provided `.bat` and `.ps1` scripts to clean and rebuild your Docker environment:
   1.  **Run the clean and build batch script**:
@@ -290,7 +290,7 @@ Para realizar limpeza opcional e evitar possíveis conflitos, você pode executa
       - Remove os diretórios `node_modules` e `dist`, se existirem.
       - Solicita confirmação para limpar o cache do Docker usando `docker system prune -f`.
       - Oferece opções para limpar imagens e volumes do Docker, se necessário.
-      - ![Opção de limpeza do Docker](./public/Docker-Clear-Option-Linux.png)
+      - ![Opção de limpeza do Docker](./public/Docker-Clear-Option-Linux-Cmd.png)
 - **Windows**:
   - Você pode usar os scripts `.bat` e `.ps1` fornecidos para limpar e reconstruir seu ambiente Docker:
   1.  **Execute o script de limpeza e construção em batch**:
