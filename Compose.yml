@@ -47,16 +47,26 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ["npm", "test"]
+    command: ["npm", "run", "test:unit"]
     environment:
       - NODE_ENV=test
+      - TEST_TYPE=unit
       - DB_HOST=${POSTGRES_HOST:-db}
       - DB_USERNAME=${POSTGRES_USER:-postgres}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-password}
-      - DB_NAME=${POSTGRES_DB:-luizalabsdb}
+      - DB_NAME=${POSTGRES_DB_TEST:-luizalabsdb_test}
       - DB_PORT=5432
     depends_on:
-      - db
+      - db_test
+
+  db_test:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB_TEST:-luizalabsdb_test}
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   db:
