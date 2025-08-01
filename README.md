@@ -64,7 +64,7 @@ This project is a test assignment for a position at Luiza Labs. The goal is to d
 
 ---
 
-## Sequence Diagrams
+## Sequence Diagram
 
 ![Sequence Diagram](./docs/Diagrama-Fluxo.png)
 
@@ -230,7 +230,7 @@ Este projeto é um teste para uma vaga na Luiza Labs. O objetivo é demonstrar m
 
 ---
 
-## Diagramas de Sequência
+## Diagrama de Sequência
 
 ![Sequence Diagram](./docs/Diagrama-Fluxo.png)
 
