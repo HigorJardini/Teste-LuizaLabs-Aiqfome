@@ -160,12 +160,14 @@ To perform optional cleanup and avoid potential conflicts, you can run the follo
 ![Swagger Documentation](./public/Swagger.png)
 You can view the Swagger API documentation [here](http://localhost:3004/docs/).
 
-- **Adminer**: Adminer is available for internal database management at http://localhost:8089. This tool allows you to manage and interact with the database directly.
+- **Adminer**: Adminer is available for internal database management at http://localhost:8091. This tool allows you to manage and interact with the database directly.
 
 ![Adminer](./public/Adminer.png)
 You can access Adminer for internal database management [here](http://localhost:8091/).
 
 - **API Testing with api.http**: You can view and test the API using the api.http file included in the project. This file contains predefined API requests that can be executed using the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension in VSCode. Make sure to install the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension to enable this functionality.
+
+![Api Http](./public/Api-Http.png)
 
 ## 🇧🇷 - Versão em Português
 
@@ -312,9 +314,11 @@ Para realizar limpeza opcional e evitar possíveis conflitos, você pode executa
 ![Documentação Swagger](./public/Swagger.png)
 Você pode visualizar a documentação da API Swagger[here](http://localhost:3000/docs/). (infelizmente não foi traduzido).
 
-- **Adminer**: O Adminer está disponível para gerenciamento interno do banco de dados em http://localhost:8089. Esta ferramenta permite que você gerencie e interaja com o banco de dados diretamente.
+- **Adminer**: O Adminer está disponível para gerenciamento interno do banco de dados em http://localhost:8091. Esta ferramenta permite que você gerencie e interaja com o banco de dados diretamente.
 
 ![Adminer](./public/Adminer.png)
 Você pode acessar o Adminer para gerenciamento interno do banco de dados [aqui](http://localhost:8091/).
 
 - **Teste de API com api.http**: Você pode visualizar e testar a API usando o arquivo api.http incluído no projeto. Este arquivo contém requisições de API pré-definidas que podem ser executadas usando a extensão [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) no VSCode. Certifique-se de instalar a extensão [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) para habilitar essa funcionalidade.
+
+![Api Http](./public/Api-Http.png)
