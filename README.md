@@ -66,7 +66,7 @@ This project is a test assignment for a position at Luiza Labs. The goal is to d
 
 ## Sequence Diagram
 
-![Sequence Diagram Auth](./docs/Diagrama-Sequencia-Auth.png)
+![Sequence Diagram Auth](./docs/Diagrama-Sequencia-Auth.PNG)
 
 To provide a better understanding of the authentication process, a sequence diagram was created using Mermaid. This diagram illustrates the interaction between different components of the system during authentication:
 
@@ -266,7 +266,7 @@ O diagrama de fluxo fornece uma visão mais ampla de como os dados se movem atra
 
 ## Diagrama do Banco de Dados
 
-![Database Diagram](./docs/Diagrama-Entidade-Relacionamento.png)
+![Database Diagram](./docs/Diagrama-Entidade-Relacionamento.PNG)
 
 O banco de dados segue um modelo relacional com as seguintes entidades principais:
 
