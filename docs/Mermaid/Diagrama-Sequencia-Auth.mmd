@@ -1,0 +1,67 @@
+sequenceDiagram
+    participant Client
+    participant AuthController
+    participant LoginUseCase
+    participant RegisterUseCase
+    participant UserRepo as UserLoginRepository
+    participant JWTService
+    
+    %% Fluxo de registro
+    rect rgb(240, 240, 255)
+        note over Client, JWTService: Registro de Usuário
+        Client->>AuthController: POST /api/auth/register {username, password, name}
+        AuthController->>RegisterUseCase: execute(registerDTO)
+        RegisterUseCase->>UserRepo: findByUsername(username)
+        UserRepo-->>RegisterUseCase: null (usuário não existe)
+        RegisterUseCase->>RegisterUseCase: hash(password)
+        RegisterUseCase->>UserRepo: create(user)
+        UserRepo-->>RegisterUseCase: savedUser
+        RegisterUseCase-->>AuthController: true
+        AuthController-->>Client: 201 Created
+    end
+    
+    %% Fluxo de login
+    rect rgb(240, 255, 240)
+        note over Client, JWTService: Login de Usuário
+        Client->>AuthController: POST /api/auth/login {username, password}
+        AuthController->>LoginUseCase: execute(loginDTO)
+        LoginUseCase->>UserRepo: findByUsername(username)
+        UserRepo-->>LoginUseCase: user
+        
+        alt Usuário encontrado
+            LoginUseCase->>LoginUseCase: compare(password, user.password)
+            
+            alt Senha válida
+                LoginUseCase->>JWTService: sign({sub: user.id, username})
+                JWTService-->>LoginUseCase: token
+                LoginUseCase-->>AuthController: {token, user}
+                AuthController-->>Client: 200 OK {token, user}
+            else Senha inválida
+                LoginUseCase-->>AuthController: Error: "Invalid credentials"
+                AuthController-->>Client: 401 Unauthorized
+            end
+        else Usuário não encontrado
+            LoginUseCase-->>AuthController: Error: "Invalid credentials"
+            AuthController-->>Client: 401 Unauthorized
+        end
+    end
+    
+    %% Fluxo de acesso a recursos protegidos (genérico)
+    rect rgb(255, 240, 240)
+        note over Client, JWTService: Acesso a Endpoints Protegidos
+        participant AuthMiddleware
+        participant ResourceController
+        
+        Client->>AuthMiddleware: Request a qualquer endpoint protegido (Bearer Token)
+        AuthMiddleware->>JWTService: verify(token)
+        
+        alt Token válido
+            JWTService-->>AuthMiddleware: decodedToken {sub, username}
+            AuthMiddleware->>AuthMiddleware: req.user = decodedToken
+            AuthMiddleware->>ResourceController: Passa requisição para o controlador
+            ResourceController->>Client: 200 OK (Resposta do recurso)
+        else Token inválido
+            JWTService-->>AuthMiddleware: Error: "Invalid token"
+            AuthMiddleware-->>Client: 401 Unauthorized
+        end
+    end

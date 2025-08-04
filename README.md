@@ -66,15 +66,26 @@ This project is a test assignment for a position at Luiza Labs. The goal is to d
 
 ## Sequence Diagram
 
-![Sequence Diagram](./docs/Diagrama-Fluxo.png)
+![Sequence Diagram](./docs/Diagrama-Sequencia.png)
 
-To provide a better understanding of the application's flow, a sequence diagram was created using Mermaid. This diagram illustrates the interaction between different components of the system during key operations:
+To provide a better understanding of the authentication process, a sequence diagram was created using Mermaid. This diagram illustrates the interaction between different components of the system during authentication:
+
+- **Registration Process**: Shows the flow when a new user registers in the system.
+- **Login Process**: Demonstrates how user credentials are validated and tokens are generated.
+- **Protected Endpoints Access**: Illustrates how JWT tokens are verified when accessing protected resources.
+
+The sequence diagram helps visualize the time-ordered interactions during authentication processes.
+
+## Flow Diagram
+
+![Flow Diagram](./docs/Diagrama-Fluxo.png)
+
+This flow diagram illustrates the key operational processes in the system:
 
 - **File Upload Process**: Shows the complete flow from the client uploading a file to the server processing it and storing the data in the database.
 - **Order Query Process**: Illustrates how order queries are processed, including authentication, filter application, and result pagination.
-- **Authentication Flow**: Demonstrates the user registration and login processes, including JWT token generation and validation.
 
-The sequence diagram helps visualize how the system's components interact in a time-ordered sequence, making it easier to understand the system's behavior and the implementation of the clean architecture principles in practice.
+The flow diagram provides a broader view of how data moves through the system components.
 
 ## Database Diagram
 
@@ -232,15 +243,26 @@ Este projeto é um teste para uma vaga na Luiza Labs. O objetivo é demonstrar m
 
 ## Diagrama de Sequência
 
-![Sequence Diagram](./docs/Diagrama-Fluxo.png)
+![Diagrama de Sequência](./docs/Diagrama-Sequencia.png)
 
-Para fornecer uma melhor compreensão do fluxo da aplicação, foi criado um diagrama de sequência usando Mermaid. Esse diagrama ilustra a interação entre os diferentes componentes do sistema durante operações-chave:
+Para fornecer uma melhor compreensão do processo de autenticação, foi criado um diagrama de sequência usando Mermaid. Esse diagrama ilustra a interação entre os diferentes componentes do sistema durante a autenticação:
+
+- **Processo de Registro**: Mostra o fluxo quando um novo usuário se registra no sistema.
+- **Processo de Login**: Demonstra como as credenciais do usuário são validadas e os tokens são gerados.
+- **Acesso a Endpoints Protegidos**: Ilustra como os tokens JWT são verificados ao acessar recursos protegidos.
+
+O diagrama de sequência ajuda a visualizar as interações ordenadas por tempo durante os processos de autenticação.
+
+## Diagrama de Fluxo
+
+![Diagrama de Fluxo](./docs/Diagrama-Fluxo.png)
+
+Este diagrama de fluxo ilustra os principais processos operacionais no sistema:
 
 - **Processo de Upload de Arquivo**: Mostra o fluxo completo desde o cliente enviando um arquivo até o servidor processá-lo e armazenar os dados no banco de dados.
 - **Processo de Consulta de Pedidos**: Ilustra como as consultas de pedidos são processadas, incluindo autenticação, aplicação de filtros e paginação de resultados.
-- **Fluxo de Autenticação**: Demonstra os processos de registro e login do usuário, incluindo geração e validação de tokens JWT.
 
-O diagrama de sequência ajuda a visualizar como os componentes do sistema interagem em uma sequência ordenada por tempo, facilitando a compreensão do comportamento do sistema e a implementação dos princípios de arquitetura limpa na prática.
+O diagrama de fluxo fornece uma visão mais ampla de como os dados se movem através dos componentes do sistema.
 
 ## Diagrama do Banco de Dados
 
