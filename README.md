@@ -243,7 +243,7 @@ Este projeto é um teste para uma vaga na Luiza Labs. O objetivo é demonstrar m
 
 ## Diagrama de Sequência
 
-![Diagrama de Sequência](./docs/Diagrama-Sequencia.png)
+![Diagrama de Sequência](./docs/Diagrama-Sequencia-Auth.png)
 
 Para fornecer uma melhor compreensão do processo de autenticação, foi criado um diagrama de sequência usando Mermaid. Esse diagrama ilustra a interação entre os diferentes componentes do sistema durante a autenticação:
 
