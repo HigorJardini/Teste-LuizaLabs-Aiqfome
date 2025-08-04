@@ -66,7 +66,7 @@ This project is a test assignment for a position at Luiza Labs. The goal is to d
 
 ## Sequence Diagram
 
-![Sequence Diagra Auth](./docs/Diagrama-Sequencia-Auth.png)
+![Sequence Diagram Auth](./docs/Diagrama-Sequencia-Auth.png)
 
 To provide a better understanding of the authentication process, a sequence diagram was created using Mermaid. This diagram illustrates the interaction between different components of the system during authentication:
 
