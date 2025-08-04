@@ -243,7 +243,7 @@ Este projeto é um teste para uma vaga na Luiza Labs. O objetivo é demonstrar m
 
 ## Diagrama de Sequência
 
-![Diagrama de Sequência Autenticação](./docs/Diagrama-Sequencia-Auth.png)
+![Diagrama de Sequência Autenticação](./docs/Diagrama-Sequencia-Auth.PNG)
 
 Para fornecer uma melhor compreensão do processo de autenticação, foi criado um diagrama de sequência usando Mermaid. Esse diagrama ilustra a interação entre os diferentes componentes do sistema durante a autenticação:
 
@@ -266,7 +266,7 @@ O diagrama de fluxo fornece uma visão mais ampla de como os dados se movem atra
 
 ## Diagrama do Banco de Dados
 
-![Database Diagram](./docs/Diagrama-Entidade-Relacionamento.PNG)
+![Database Diagram](./docs/Diagrama-Entidade-Relacionamento.png)
 
 O banco de dados segue um modelo relacional com as seguintes entidades principais:
 
