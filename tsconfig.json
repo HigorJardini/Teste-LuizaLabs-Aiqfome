@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "baseUrl": "./src",
+    "skipLibCheck": true,
+    "paths": {
+      "@routes": ["interfaces/api/routes/index.ts"],
+      "@controllers": ["interfaces/api/controllers/index.ts"],
+      "@factories": ["interfaces/api/factories/index.ts"],
+      "@usecases": ["domain/usecases/index.ts"],
+      "@entities": ["domain/entities/index.ts"],
+      "@dtos": ["application/dtos/index.ts"],
+      "@infra": ["infrastructure/index.ts"],
+      "@types": ["utils/types/index.ts"],
+      "@config/*": ["utils/shared/config/*"]
+    }
+  },
+  "include": ["src"]
+}
