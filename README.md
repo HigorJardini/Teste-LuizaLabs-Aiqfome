@@ -61,8 +61,8 @@ The goal is to demonstrate my ability to develop a **scalable and maintainable b
 
 ### Sequence Diagram
 
-![Sequence Diagram Auth Part 1](./docs/Diagrama-Sequencia-p1.PNG)  
-![Sequence Diagram Auth Part 2](./docs/Diagrama-Sequencia-p2.PNG)
+![Sequence Diagram Auth Part 1](./docs/Diagrama-Sequencia-pt1.png)  
+![Sequence Diagram Auth Part 2](./docs/Diagrama-Sequencia-pt2.png)
 
 To provide a better understanding of the authentication process, a sequence diagram was created using Mermaid. This diagram illustrates the interaction between different components of the system during authentication:
 
@@ -238,8 +238,8 @@ O objetivo é demonstrar minha capacidade de desenvolver uma **aplicação backe
 
 ### Diagrama de Sequência
 
-![Diagrama de Sequência Autenticação Parte 1](./docs/Diagrama-Sequencia-p1.PNG)
-![Diagrama de Sequência Autenticação Parte 2](./docs/Diagrama-Sequencia-p2.PNG)
+![Diagrama de Sequência Autenticação Parte 1](./docs/Diagrama-Sequencia-pt1.png)
+![Diagrama de Sequência Autenticação Parte 2](./docs/Diagrama-Sequencia-pt2.png)
 
 Para fornecer uma melhor compreensão do processo de autenticação, foi criado um diagrama de sequência usando Mermaid. Esse diagrama ilustra a interação entre os diferentes componentes do sistema durante a autenticação:
 
@@ -345,7 +345,7 @@ Para realizar limpeza opcional e evitar possíveis conflitos, você pode executa
 - **Documentação da API Swagger**: A documentação da API Swagger pode ser acessada em http://localhost:3004/docs/. Isso fornece informações detalhadas sobre os endpoints da API e como usá-los.
 
 ![Documentação Swagger](./public/Swagger.png)
-Você pode visualizar a documentação da API Swagger[here](http://localhost:3000/docs/). (infelizmente não foi traduzido).
+Você pode visualizar a documentação da API Swagger [aqui](http://localhost:3004/docs/). (infelizmente não foi traduzido).
 
 - **Adminer**: O Adminer está disponível para gerenciamento interno do banco de dados em http://localhost:8091. Esta ferramenta permite que você gerencie e interaja com o banco de dados diretamente.
 
