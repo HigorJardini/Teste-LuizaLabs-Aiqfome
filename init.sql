@@ -8,49 +8,45 @@ CREATE TABLE UserLogins (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Modified Users table with email
 CREATE TABLE Users (
-    id SERIAL PRIMARY KEY,                -- ID interno (chave primária)
-    user_id INT NOT NULL,                 -- Código de negócio (não único)
-    name VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE Uploads (
     id SERIAL PRIMARY KEY,
-    login_id BIGINT NOT NULL,
-    filename VARCHAR(255),
-    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (login_id) REFERENCES UserLogins(login_id)
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    login_id BIGINT REFERENCES UserLogins(login_id)
 );
 
-CREATE TABLE Orders (
-    id SERIAL PRIMARY KEY,                -- ID interno (chave primária)
-    order_id INT NOT NULL,                -- Código de negócio (não único)
-    purchase_date DATE NOT NULL,
-    total DECIMAL(10, 2) NOT NULL,
-    upload_id INT NOT NULL,
-    user_table_id INT NOT NULL,           -- Referência ao id da tabela Users (não ao user_id)
-    FOREIGN KEY (user_table_id) REFERENCES Users(id),
-    FOREIGN KEY (upload_id) REFERENCES Uploads(id)
+-- New table for favorite products
+CREATE TABLE FavoriteProducts (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_external_id INT NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_product UNIQUE (user_id, product_external_id)
 );
 
-CREATE TABLE Products (
-    id SERIAL PRIMARY KEY,                -- ID interno (chave primária)
-    product_id INT NOT NULL,              -- Código de negócio (não único)
-    value DECIMAL(10, 2) NOT NULL,
-    order_table_id INT NOT NULL,          -- Referência ao id da tabela Orders (não ao order_id)
-    FOREIGN KEY (order_table_id) REFERENCES Orders(id) ON DELETE CASCADE
+-- Cache table for external product data
+CREATE TABLE ProductCache (
+    product_external_id INT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    image_url TEXT,
+    description TEXT,
+    category VARCHAR(255),
+    rating_rate DECIMAL(3, 2),
+    rating_count INT,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Índices para melhorar performance
-CREATE INDEX idx_order_business ON Orders(order_id, user_table_id);
-CREATE INDEX idx_uploads_login_id ON Uploads(login_id);
-CREATE INDEX idx_orders_user_table_id ON Orders(user_table_id);
-CREATE INDEX idx_orders_upload_id ON Orders(upload_id);
-CREATE INDEX idx_products_order_table_id ON Products(order_table_id);
-CREATE INDEX idx_products_product_id ON Products(product_id);
-CREATE INDEX idx_users_user_id ON Users(user_id);  -- Adicionado para otimizar buscas por user_id
+-- Indices for performance
+CREATE INDEX idx_favorite_products_user_id ON FavoriteProducts(user_id);
+CREATE INDEX idx_users_email ON Users(email);
+CREATE INDEX idx_users_login_id ON Users(login_id);
 
--- Trigger para atualizar automaticamente o updated_at
+-- Trigger to update 'updated_at' timestamps
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -61,5 +57,16 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_userlogins_updated_at
 BEFORE UPDATE ON UserLogins
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_users_updated_at
+BEFORE UPDATE ON Users
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger to auto-update the ProductCache last_updated field
+CREATE TRIGGER update_product_cache_last_updated
+BEFORE UPDATE ON ProductCache
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();

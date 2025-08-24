@@ -26,10 +26,8 @@
       "@types": ["utils/types/index.ts"],
       "@config/*": ["utils/shared/config/*"],
       "@schemas": ["utils/shared/schemas/index.ts"],
-      "@parsers/*": ["utils/shared/parsers/*"],
       "types": ["utils/types/index.ts"]
-    },
-    "typeRoots": ["./node_modules/@types", "./src/types"]
+    }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/domain/entities/favorite-product/.entity.ts"]
 }

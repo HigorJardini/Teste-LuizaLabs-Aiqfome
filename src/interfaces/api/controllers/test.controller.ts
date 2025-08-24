@@ -5,6 +5,6 @@ export const testController = async (
   reply: FastifyReply
 ) => {
   return reply.status(200).send({
-    message: "Projeto LuizaLabs Iniciado",
+    message: "Projeto LuizaLabs (Aiqfome) Iniciado",
   });
 };

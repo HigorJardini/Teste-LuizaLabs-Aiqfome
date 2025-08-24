@@ -3,8 +3,8 @@ export const loginSchema = {
     type: "object",
     required: ["username", "password"],
     properties: {
-      username: { type: "string" },
-      password: { type: "string" },
+      username: { type: "string", minLength: 3 },
+      password: { type: "string", minLength: 6 },
     },
   },
   response: {
@@ -15,6 +15,9 @@ export const loginSchema = {
         user: {
           type: "object",
           properties: {
+            id: { type: "number" },
+            name: { type: "string" },
+            email: { type: "string" },
             login_id: { type: "number" },
             username: { type: "string" },
             status: { type: "boolean" },
@@ -22,5 +25,13 @@ export const loginSchema = {
         },
       },
     },
+    401: {
+      type: "object",
+      properties: {
+        message: { type: "string" },
+      },
+    },
   },
+  tags: ["Authentication"],
+  description: "Login with username and password",
 };

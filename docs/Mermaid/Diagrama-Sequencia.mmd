@@ -1,0 +1,107 @@
+sequenceDiagram
+    participant Client
+    participant AuthController
+    participant LoginUseCase
+    participant RegisterUseCase
+    participant UserLoginRepo as UserLoginRepository
+    participant UserRepo as UserRepository
+    participant JWTService
+    
+    %% Fluxo de registro
+    rect rgb(240, 240, 255)
+        note over Client, JWTService: Registro de Usuário
+        Client->>AuthController: POST /auth/register {username, password, name, email}
+        AuthController->>RegisterUseCase: execute(registerDTO)
+        
+        RegisterUseCase->>UserLoginRepo: findByUsername(username)
+        UserLoginRepo-->>RegisterUseCase: null (usuário não existe)
+        
+        RegisterUseCase->>UserRepo: findByEmail(email)
+        UserRepo-->>RegisterUseCase: null (email não existe)
+        
+        RegisterUseCase->>RegisterUseCase: hash(password)
+        RegisterUseCase->>UserLoginRepo: create(userLogin)
+        UserLoginRepo-->>RegisterUseCase: savedUserLogin
+        
+        RegisterUseCase->>UserRepo: create(user with login_id)
+        UserRepo-->>RegisterUseCase: savedUser
+        
+        RegisterUseCase-->>AuthController: { userId, loginId }
+        AuthController-->>Client: 201 Created { message, userId, loginId }
+    end
+    
+    %% Fluxo de login
+    rect rgb(240, 255, 240)
+        note over Client, JWTService: Login de Usuário
+        Client->>AuthController: POST /auth/login {username, password}
+        AuthController->>LoginUseCase: execute(loginDTO)
+        
+        LoginUseCase->>UserLoginRepo: findByUsername(username)
+        UserLoginRepo-->>LoginUseCase: userLogin
+        
+        alt Usuário encontrado
+            LoginUseCase->>LoginUseCase: check userLogin.status
+            
+            alt Status ativo
+                LoginUseCase->>LoginUseCase: compare(password, userLogin.password)
+                
+                alt Senha válida
+                    LoginUseCase->>UserRepo: findByLoginId(userLogin.login_id)
+                    UserRepo-->>LoginUseCase: user
+                    
+                    alt Perfil encontrado
+                        LoginUseCase->>JWTService: sign({sub: userLogin.login_id, username, userId: user.id})
+                        JWTService-->>LoginUseCase: token
+                        LoginUseCase-->>AuthController: {token, user}
+                        AuthController-->>Client: 200 OK {token, user}
+                    else Perfil não encontrado
+                        LoginUseCase-->>AuthController: Error: "User profile not found"
+                        AuthController-->>Client: 404 Not Found
+                    end
+                else Senha inválida
+                    LoginUseCase-->>AuthController: Error: "Invalid credentials"
+                    AuthController-->>Client: 401 Unauthorized
+                end
+            else Status inativo
+                LoginUseCase-->>AuthController: Error: "Account is disabled"
+                AuthController-->>Client: 401 Unauthorized
+            end
+        else Usuário não encontrado
+            LoginUseCase-->>AuthController: Error: "Invalid credentials"
+            AuthController-->>Client: 401 Unauthorized
+        end
+    end
+    
+    %% Fluxo de acesso a recursos protegidos (genérico)
+    rect rgb(255, 240, 240)
+        note over Client, JWTService: Acesso a Endpoints Protegidos
+        participant AuthMiddleware
+        participant ResourceController
+        
+        Client->>AuthMiddleware: Request a qualquer endpoint protegido (Bearer Token)
+        AuthMiddleware->>JWTService: verify(token)
+        
+        alt Token válido
+            JWTService-->>AuthMiddleware: decodedToken {sub, username, userId}
+            
+            AuthMiddleware->>UserLoginRepo: findByUsername(decodedToken.username)
+            UserLoginRepo-->>AuthMiddleware: userLogin
+            
+            alt Usuário existe
+                AuthMiddleware->>AuthMiddleware: check userLogin.status
+                
+                alt Status ativo
+                    AuthMiddleware->>AuthMiddleware: req.user = decodedToken
+                    AuthMiddleware->>ResourceController: Passa requisição para o controlador
+                    ResourceController->>Client: 200 OK (Resposta do recurso)
+                else Status inativo
+                    AuthMiddleware-->>Client: 401 Unauthorized (Account is disabled)
+                end
+            else Usuário não existe
+                AuthMiddleware-->>Client: 401 Unauthorized (User not found)
+            end
+        else Token inválido
+            JWTService-->>AuthMiddleware: Error: "Invalid token"
+            AuthMiddleware-->>Client: 401 Unauthorized
+        end
+    end

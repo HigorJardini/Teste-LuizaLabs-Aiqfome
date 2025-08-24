@@ -1,107 +1,113 @@
-# Luiza Labs Test Project
+# Luiza Labs Test Project - Favorite Products API
 
 <div align="center">
-   <img src="./public/luizalabs-logo.png" width="250px">
+  <img src="./public/luizalabs-logo.png" width="250px">
+</div>
+<div align="center">
+  <img src="./public/Aiq.png" width="250px">
 </div>
 
 ---
 
 ## Language - Idioma
 
-- [English Version](#overview)
-- [Versão em Português](#visão-geral)
+- 🇺🇸 [English Version](#-english-version)
+- 🇧🇷 [Versão em Português](#-versão-em-português)
 
 ---
 
-## 🇺🇸 - English Version
+## 🇺🇸 English Version
+
+### Overview
+
+This project is a test assignment for a position at **Luiza Labs (Aiqfome)**.  
+The goal is to demonstrate my ability to develop a **scalable and maintainable backend application** that:
+
+- Manages favorite products from an external API
+- Stores them in a relational database
+- Provides **REST endpoints** to access this information
 
 ---
-
-## Overview
-
-This project is a test assignment for a position at Luiza Labs. The goal is to demonstrate my ability to develop a scalable and maintainable backend application that processes order data from files, stores it in a database, and provides APIs to access this information.
 
 ### Key Features
 
-- **File Processing**: The system processes fixed-width text files containing order data, extracts information about users, orders, and products, and stores it in a structured way.
+- **User Authentication** → Secure registration & login with **JWT tokens**
+- **RESTful API** → Endpoints for user management and favorite product operations (add, remove, list)
+- **Data Management** → Relational model with proper relationships between users and favorite products
+- **External API Integration** → Fetches product data from an external API and maintains a local cache
 
-- **RESTful API**: Provides endpoints for user authentication, file uploads, and order querying with various filters.
-
-- **Data Management**: Implements a relational database model with proper relationships between users, orders, and products.
+---
 
 ### Objectives
 
-- **Follow Clean Architecture Principles**: The project is structured using domain-driven design with clear separation of concerns between domain logic, application services, and infrastructure.
-
-- **Implement Security with JWT**: JWT authentication is used to secure the API endpoints.
-
-- **Provide Comprehensive Testing**: The project includes both tests to ensure functionality and reliability.
+- Follow **Clean Architecture** & Domain-Driven Design
+- Secure endpoints with **JWT**
+- Provide **comprehensive tests**
 
 ---
 
-## Technologies Used
+### 🛠️ Technologies Used
 
-- **Node.js**: A JavaScript runtime built on Chrome's V8 JavaScript engine.
-- **TypeScript**: A typed superset of JavaScript that compiles to plain JavaScript.
-- **Fastify**: A high-performance web framework for Node.js.
-- **TypeORM**: An ORM framework for TypeScript and JavaScript.
-- **PostgreSQL**: A powerful, open-source object-relational database system.
-- **Jest**: A testing framework for JavaScript, used for running unit and integration tests.
-- **Docker**: A platform for developing, shipping, and running applications inside containers.
-- **Docker Compose**: A tool for defining and running multi-container Docker applications.
-- **Mermaid**: Used for database documentation and diagram generation.
-
-## Versions Used
-
-- **Node.js**: 20.x
-- **TypeScript**: 5.x
-- **Fastify**: 4.x
-- **TypeORM**: 0.3.x
-- **PostgreSQL**: 15.x
-- **Jest**: 30.x
-- **Docker**: 24.x
-- **Docker Compose**: 3.x
+- Node.js 20.x
+- TypeScript 5.x
+- Fastify 4.x
+- TypeORM 0.3.x
+- PostgreSQL 15.x
+- Jest 30.x
+- Docker 24.x + Docker Compose 3.x
+- Mermaid (for diagrams)
 
 ---
 
-## Sequence Diagram
+### Sequence Diagram
 
-![Sequence Diagram Auth](./docs/Diagrama-Sequencia-Auth.PNG)
+![Sequence Diagram Auth Part 1](./docs/Diagrama-Sequencia-p1.PNG)  
+![Sequence Diagram Auth Part 2](./docs/Diagrama-Sequencia-p2.PNG)
 
 To provide a better understanding of the authentication process, a sequence diagram was created using Mermaid. This diagram illustrates the interaction between different components of the system during authentication:
 
-- **Registration Process**: Shows the flow when a new user registers in the system.
-- **Login Process**: Demonstrates how user credentials are validated and tokens are generated.
-- **Protected Endpoints Access**: Illustrates how JWT tokens are verified when accessing protected resources.
+- **Registration Process:** Shows the flow when a new user registers in the system.
+- **Login Process: Demonstrates** how user credentials are validated and tokens are generated.
+- **Protected Endpoints Access:** Illustrates how JWT tokens are verified when accessing protected resources.
 
-The sequence diagram helps visualize the time-ordered interactions during authentication processes.
+**Authentication Flow Includes:**
 
-## Flow Diagram
+- Registration Process
+- Login Process
+- Protected Endpoints Access
+
+---
+
+### Flow Diagram
 
 ![Flow Diagram](./docs/Diagrama-Fluxo.png)
 
 This flow diagram illustrates the key operational processes in the system:
 
-- **File Upload Process**: Shows the complete flow from the client uploading a file to the server processing it and storing the data in the database.
-- **Order Query Process**: Illustrates how order queries are processed, including authentication, filter application, and result pagination.
+- **Authentication Flow:** Shows the complete flow for user registration and login.
+- **User Management Flow:** Illustrates how user profile data is managed.
+- **Favorites Management Flow:** Demonstrates how favorite products are added, removed, and retrieved.
 
-The flow diagram provides a broader view of how data moves through the system components.
+**Flow Includes:**
 
-## Database Diagram
+- Authentication Flow
+- User Management Flow
+- Favorites Management Flow
+
+---
+
+### Database Diagram
 
 ![Database Diagram](./docs/Diagrama-Entidade-Relacionamento.png)
 
 The database follows a relational model with the following main entities:
 
-- **Users**: Stores information about users who place orders
-- **Orders**: Contains order details with relations to users and products
-- **Products**: Stores product information associated with orders
-- **UserLogin**: Manages authentication and user access
-- **Upload**: Tracks file uploads and processing results
+**Main Entities:**
 
-Each entity uses both internal auto-incremented IDs for relationships and business IDs for external references.
-
-The database documentation and diagrams were created using Mermaid for better visualization and understanding of the data structure.
+- **UserLogins** → manages authentication credentials
+- **Users** → stores profile information
+- **FavoriteProducts** → tracks user favorites
+- **ProductCache** → stores external API product data
 
 ---
 
@@ -116,22 +122,17 @@ To install the project, follow these steps:
 2. Edit the .env file to set the following variables:
 
    ```env
-    PORT=
-    NODE_ENV="development" # or "production" or "test"
-    DB_HOST=db
-    DB_PORT=5432
-    DB_USERNAME=
-    DB_PASSWORD=
-    DB_NAME=
-    JWT_SECRET=secret_key
+      PORT=
+      NODE_ENV="development" # or "production" or "test"
+      DB_HOST=db
+      DB_PORT=5432
+      DB_USERNAME=
+      DB_PASSWORD=
+      DB_NAME=
+      JWT_SECRET=secret_key
 
-    # Upload limits
-    UPLOAD_FILE_SIZE_LIMIT=5242880  # 5MB em bytes
-    UPLOAD_MAX_FILES=10
-    UPLOAD_FIELD_SIZE=100
-
-    #Test configuration
-    TEST_TYPE=unit  # or integration
+      #Test configuration
+      TEST_TYPE=unit  # or integration
    ```
 
 3. Start the services using Docker Compose
@@ -192,93 +193,84 @@ You can access Adminer for internal database management [here](http://localhost:
 
 ![Api Http](./public/Api-Http.png)
 
-## 🇧🇷 - Versão em Português
+## 🇧🇷 Versão em Português
 
-## Visão Geral
+### Visão Geral
 
-Este projeto é um teste para uma vaga na Luiza Labs. O objetivo é demonstrar minha capacidade de desenvolver uma aplicação backend escalável e de fácil manutenção que processa dados de pedidos a partir de arquivos, armazena-os em um banco de dados e fornece APIs para acessar essas informações.
+Este projeto é um teste para uma vaga na **Luiza Labs (Aiqfome)**.
+O objetivo é demonstrar minha capacidade de desenvolver uma **aplicação backend escalável e de fácil manutenção** que:
+
+- Gerencie produtos favoritos de uma API externa
+- Armazene-os em um banco relacional
+- Forneça **endpoints REST** para acesso às informações
+
+---
 
 ### Principais Funcionalidades
 
-- **Processamento de Arquivos**: O sistema processa arquivos de texto de largura fixa contendo dados de pedidos, extrai informações sobre usuários, pedidos e produtos, e os armazena de forma estruturada.
+- **Autenticação de Usuários** → Registro e login seguro com **JWT**
+- **API RESTful** → Endpoints para gerenciamento de usuários e favoritos (adicionar, remover, listar)
+- **Gerenciamento de Dados** → Modelo relacional entre usuários e produtos favoritos
+- **Integração Externa** → Busca e cache de produtos da API externa
 
-- **API RESTful**: Fornece endpoints para autenticação de usuários, upload de arquivos e consulta de pedidos com vários filtros.
-
-- **Gerenciamento de Dados**: Implementa um modelo de banco de dados relacional com relacionamentos adequados entre usuários, pedidos e produtos.
+---
 
 ### Objetivos
 
-- **Seguir Princípios de Arquitetura Limpa**: O projeto é estruturado usando design orientado a domínio com clara separação de responsabilidades entre lógica de domínio, serviços de aplicação e infraestrutura.
-
-- **Implementar Segurança com JWT**: A autenticação JWT é usada para proteger os endpoints da API.
-
-- **Fornecer Testes Abrangentes**: O projeto inclui testes para garantir funcionalidade e confiabilidade.
+- Seguir princípios de **Arquitetura Limpa** e **DDD**
+- Proteger endpoints com **JWT**
+- Incluir **testes abrangentes**
 
 ---
 
-## Tecnologias Utilizadas
+### Tecnologias Utilizadas
 
-- **Node.js**: Um runtime JavaScript construído no motor V8 do Chrome.
-- **TypeScript**: Um superconjunto tipado de JavaScript que compila para JavaScript puro.
-- **Fastify**: Um framework web de alto desempenho para Node.js.
-- **TypeORM**: Um framework ORM para TypeScript e JavaScript.
-- **PostgreSQL**: Um poderoso sistema de banco de dados objeto-relacional de código aberto.
-- **Jest**: Um framework de testes para JavaScript, usado para executar testes unitários e de integração.
-- **Docker**: Uma plataforma para desenvolver, enviar e executar aplicações dentro de contêineres.
-- **Docker Compose**: Uma ferramenta para definir e executar aplicações Docker de múltiplos contêineres.
-- **Mermaid**: Utilizado para documentação do banco de dados e geração de diagramas.
-
-## Versões Utilizadas
-
-- **Node.js**: 20.x
-- **TypeScript**: 5.x
-- **Fastify**: 4.x
-- **TypeORM**: 0.3.x
-- **PostgreSQL**: 15.x
-- **Jest**: 30.x
-- **Docker**: 24.x
-- **Docker Compose**: 3.x
+- Node.js 20.x
+- TypeScript 5.x
+- Fastify 4.x
+- TypeORM 0.3.x
+- PostgreSQL 15.x
+- Jest 30.x
+- Docker 24.x + Docker Compose 3.x
+- Mermaid (para diagramas)
 
 ---
 
-## Diagrama de Sequência
+### Diagrama de Sequência
 
-![Diagrama de Sequência Autenticação](./docs/Diagrama-Sequencia-Auth.PNG)
+![Diagrama de Sequência Autenticação Parte 1](./docs/Diagrama-Sequencia-p1.PNG)
+![Diagrama de Sequência Autenticação Parte 2](./docs/Diagrama-Sequencia-p2.PNG)
 
 Para fornecer uma melhor compreensão do processo de autenticação, foi criado um diagrama de sequência usando Mermaid. Esse diagrama ilustra a interação entre os diferentes componentes do sistema durante a autenticação:
 
-- **Processo de Registro**: Mostra o fluxo quando um novo usuário se registra no sistema.
-- **Processo de Login**: Demonstra como as credenciais do usuário são validadas e os tokens são gerados.
-- **Acesso a Endpoints Protegidos**: Ilustra como os tokens JWT são verificados ao acessar recursos protegidos.
+- **Processo de Registro:** Mostra o fluxo quando um novo usuário se registra no sistema.
+- **Processo de Login:** Demonstra como as credenciais do usuário são validadas e os tokens são gerados.
+- **Acesso a Endpoints Protegidos:** Ilustra como os tokens JWT são verificados ao acessar recursos protegidos.
 
-O diagrama de sequência ajuda a visualizar as interações ordenadas por tempo durante os processos de autenticação.
+---
 
-## Diagrama de Fluxo
+### Diagrama de Fluxo
 
 ![Diagrama de Fluxo](./docs/Diagrama-Fluxo.png)
 
 Este diagrama de fluxo ilustra os principais processos operacionais no sistema:
 
-- **Processo de Upload de Arquivo**: Mostra o fluxo completo desde o cliente enviando um arquivo até o servidor processá-lo e armazenar os dados no banco de dados.
-- **Processo de Consulta de Pedidos**: Ilustra como as consultas de pedidos são processadas, incluindo autenticação, aplicação de filtros e paginação de resultados.
+- **Fluxo de Autenticação:** Mostra o fluxo completo para registro e login de usuários.
+- **Fluxo de Gerenciamento de Usuários:** Ilustra como os dados de perfil do usuário são gerenciados.
+- **Fluxo de Gerenciamento de Favoritos:** Demonstra como os produtos favoritos são adicionados, removidos e recuperados.
 
-O diagrama de fluxo fornece uma visão mais ampla de como os dados se movem através dos componentes do sistema.
+---
 
-## Diagrama do Banco de Dados
+### Diagrama do Banco de Dados
 
-![Database Diagram](./docs/Diagrama-Entidade-Relacionamento.png)
+![Diagrama do Banco de Dados](./docs/Diagrama-Entidade-Relacionamento.png)
 
 O banco de dados segue um modelo relacional com as seguintes entidades principais:
 
-- **Users**: Armazena informações sobre usuários que fazem pedidos
-- **Orders**: Contém detalhes dos pedidos com relações para usuários e produtos
-- **Products**: Armazena informações de produtos associados a pedidos
-- **UserLogin**: Gerencia autenticação e acesso de usuários
-- **Upload**: Rastreia uploads de arquivos e resultados de processamento
-
-Cada entidade usa IDs internos autoincrementados para relacionamentos e IDs de negócio para referências externas.
-
-A documentação e os diagramas do banco de dados foram criados usando Mermaid para melhor visualização e compreensão da estrutura de dados.
+- **UserLogins** → gerencia credenciais de autenticação
+- **Users** → armazena informações de perfil
+- **FavoriteProducts** → rastreia os produtos favoritos dos usuários
+- **ProductCache** → armazena dados de produtos da API externa
 
 ---
 
@@ -293,22 +285,17 @@ Para instalar o projeto, siga estas etapas:
 2. Edite o arquivo .env para definir as seguintes variáveis:
 
    ```env
-    PORT=
-    NODE_ENV="development" # or "production" or "test"
-    DB_HOST=db
-    DB_PORT=5432
-    DB_USERNAME=
-    DB_PASSWORD=
-    DB_NAME=
-    JWT_SECRET=secret_key
+      PORT=
+      NODE_ENV="development" # or "production" or "test"
+      DB_HOST=db
+      DB_PORT=5432
+      DB_USERNAME=
+      DB_PASSWORD=
+      DB_NAME=
+      JWT_SECRET=secret_key
 
-    # Upload limits
-    UPLOAD_FILE_SIZE_LIMIT=5242880  # 5MB em bytes
-    UPLOAD_MAX_FILES=10
-    UPLOAD_FIELD_SIZE=100
-
-    #Test configuration
-    TEST_TYPE=unit  # or integration
+      #Test configuration
+      TEST_TYPE=unit  # or integration
    ```
 
 3. Inicie os serviços usando o Docker Compose:

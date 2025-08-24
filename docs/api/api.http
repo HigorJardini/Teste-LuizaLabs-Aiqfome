@@ -1,6 +1,10 @@
 @baseUrl = http://localhost:3004
 @authToken = {{login.response.body.token}}
 
+### Health check
+# @name healthCheck
+GET {{baseUrl}}/health
+
 ### Register a new user
 # @name register
 POST {{baseUrl}}/auth/register
@@ -9,7 +13,8 @@ Content-Type: application/json
 {
   "username": "magalu",
   "password": "securePassword123",
-  "name": "Magazine Luiza"
+  "name": "Magazine Luiza Aiqfome",
+  "email": "contact@magalu.com"
 }
 
 ### Login with user credentials
@@ -22,63 +27,48 @@ Content-Type: application/json
   "password": "securePassword123"
 }
 
-### Upload multiple files with orders data
-# @name uploadMultiple
-POST {{baseUrl}}/upload
-Authorization: Bearer {{authToken}}
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
-
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="file"; filename="orders1.txt"
-Content-Type: text/plain
-
-< ./data_1.txt
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="file"; filename="orders2.txt"
-Content-Type: text/plain
-
-< ./data_2.txt
-------WebKitFormBoundary7MA4YWxkTrZu0gW--
-
-### Upload multiple files with orders data
-# @name uploadTeste
-###POST {{baseUrl}}/upload
-###Authorization: Bearer {{authToken}}
-###Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
-
-###------WebKitFormBoundary7MA4YWxkTrZu0gW
-###Content-Disposition: form-data; name="file"; filename="teste.txt"
-###Content-Type: text/plain
-
-###< ./teste.txt
-###------WebKitFormBoundary7MA4YWxkTrZu0gW--
-
-### Get all orders
-# @name getAllOrders
-GET {{baseUrl}}/orders
+### Get current user profile
+# @name getProfile
+GET {{baseUrl}}/me
 Authorization: Bearer {{authToken}}
 
-### Get order by ID
-# @name getOrderById
-GET {{baseUrl}}/orders?order_id=844
+### Update user profile
+# @name updateProfile
+PUT {{baseUrl}}/me
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Updated Name",
+  "email": "updated@example.com"
+}
+
+### Delete user account
+# @name deleteProfile
+DELETE {{baseUrl}}/me
 Authorization: Bearer {{authToken}}
 
-### Get orders by date range
-# @name getOrdersByDateRange
-GET {{baseUrl}}/orders?start_date=2021-01-01&end_date=2021-12-31
+### Get all favorite products
+# @name getFavorites
+GET {{baseUrl}}/favorites
 Authorization: Bearer {{authToken}}
 
-### Get orders by user
-# @name getOrdersByUser
-GET {{baseUrl}}/orders?user_id=90
+### Add product to favorites
+# @name addFavorite
+POST {{baseUrl}}/favorites
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "productId": 1
+}
+
+### Get favorite product details
+# @name getFavoriteDetails
+GET {{baseUrl}}/favorites/1
 Authorization: Bearer {{authToken}}
 
-### Get orders with pagination
-# @name getOrdersPaginated
-GET {{baseUrl}}/orders?page=1&limit=10
-Authorization: Bearer {{authToken}}
-
-### Get orders with combined filters
-# @name getOrdersWithFilters
-GET {{baseUrl}}/orders?start_date=2021-01-01&end_date=2021-12-31&user_id=70&page=1&limit=5
+### Remove product from favorites
+# @name removeFavorite
+DELETE {{baseUrl}}/favorites/1
 Authorization: Bearer {{authToken}}

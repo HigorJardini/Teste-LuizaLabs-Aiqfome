@@ -1,150 +1,106 @@
 import { UserRepository } from "@repositories-entities";
 import { UserEntity } from "@entities";
-import { AppDataSource } from "infrastructure/repositories/connection/pg";
-import { UserTypeORMEntity } from "@database-entities";
+import { AppDataSource } from "@database-connection";
+import { User } from "@database-entities";
 
 export class TypeORMUserRepository implements UserRepository {
-  private repository = AppDataSource.getRepository(UserTypeORMEntity);
+  private repository = AppDataSource.getRepository(User);
 
-  async findById(user_id: number): Promise<UserEntity | null> {
-    try {
-      console.log(`Finding user with ID: ${user_id}`);
-      const user = await this.repository.findOne({ where: { user_id } });
-      if (!user) {
-        console.log(`User with ID ${user_id} not found`);
-        return null;
-      }
-      console.log(`Found user: ${user.name} with ID: ${user.user_id}`);
-      return {
-        user_id: user.user_id ?? 0,
-        name: user.name || "",
-      };
-    } catch (error) {
-      console.error(`Error finding user by ID ${user_id}:`, error);
-      throw error;
+  async findById(id: number): Promise<UserEntity | null> {
+    const user = await this.repository.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      return null;
     }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      login_id: user.login_id,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    };
   }
 
-  async findByUserId(
-    user_id: number,
-    name?: string
-  ): Promise<UserEntity | null> {
-    try {
-      console.log(
-        `Finding user with business ID: ${user_id}${name ? ` and name: ${name}` : ""}`
-      );
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    const user = await this.repository.findOne({
+      where: { email },
+    });
 
-      const users = await this.repository.find({
-        where: { user_id },
-      });
-
-      if (users.length === 0) {
-        console.log(`No users found with business ID ${user_id}`);
-        return null;
-      }
-
-      if (name) {
-        const matchingUser = users.find((user) => user.name === name);
-        if (matchingUser) {
-          console.log(
-            `Found exact match for user ${name} with business ID ${user_id}`
-          );
-          return {
-            id: matchingUser.id,
-            user_id: matchingUser.user_id!,
-            name: matchingUser.name!,
-          };
-        }
-
-        console.log(
-          `No user found with business ID ${user_id} and name ${name}`
-        );
-        return null;
-      }
-
-      console.log(
-        `Returning first user with business ID ${user_id}: ${users[0].name}`
-      );
-      return {
-        id: users[0].id,
-        user_id: users[0].user_id!,
-        name: users[0].name!,
-      };
-    } catch (error) {
-      console.error(`Error finding user by business ID ${user_id}:`, error);
-      throw error;
+    if (!user) {
+      return null;
     }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      login_id: user.login_id,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    };
+  }
+
+  async findByLoginId(login_id: number): Promise<UserEntity | null> {
+    const user = await this.repository.findOne({
+      where: { login_id },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      login_id: user.login_id,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    };
   }
 
   async create(user: UserEntity): Promise<UserEntity> {
-    try {
-      console.log(`Creating/updating user with business ID: ${user.user_id}`);
+    const newUser = this.repository.create({
+      name: user.name,
+      email: user.email,
+      login_id: user.login_id,
+    });
 
-      const existingUser = await this.findByUserId(user.user_id, user.name);
+    const savedUser = await this.repository.save(newUser);
 
-      if (existingUser) {
-        await this.repository.update(
-          { id: existingUser.id },
-          { name: user.name }
-        );
-
-        return {
-          id: existingUser.id,
-          user_id: existingUser.user_id,
-          name: user.name,
-        };
-      }
-
-      const newUser = this.repository.create({
-        user_id: user.user_id,
-        name: user.name,
-      });
-
-      const savedUser = await this.repository.save(newUser);
-
-      return {
-        id: savedUser.id,
-        user_id: savedUser.user_id!,
-        name: savedUser.name!,
-      };
-    } catch (error) {
-      console.error(
-        `Error creating/updating user with ID ${user.user_id}:`,
-        error
-      );
-      throw error;
-    }
+    return {
+      id: savedUser.id,
+      name: savedUser.name,
+      email: savedUser.email,
+      login_id: savedUser.login_id,
+      created_at: savedUser.created_at,
+      updated_at: savedUser.updated_at,
+    };
   }
 
-  async findByName(name: string): Promise<UserEntity[]> {
-    try {
-      console.log(`Finding users with name: ${name}`);
-      const users = await this.repository.find({ where: { name } });
-      console.log(`Found ${users.length} users with name: ${name}`);
+  async update(id: number, user: Partial<UserEntity>): Promise<UserEntity> {
+    await this.repository.update(id, user);
 
-      return users.map((user) => ({
-        user_id: user.user_id ?? 0,
-        name: user.name || "",
-      }));
-    } catch (error) {
-      console.error(`Error finding users by name ${name}:`, error);
-      throw error;
-    }
+    const updatedUser = await this.repository.findOneOrFail({
+      where: { id },
+    });
+
+    return {
+      id: updatedUser.id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      login_id: updatedUser.login_id,
+      created_at: updatedUser.created_at,
+      updated_at: updatedUser.updated_at,
+    };
   }
 
-  async findAll(): Promise<UserEntity[]> {
-    try {
-      console.log(`Retrieving all users`);
-      const users = await this.repository.find();
-      console.log(`Found ${users.length} users`);
-
-      return users.map((user) => ({
-        user_id: user.user_id ?? 0,
-        name: user.name || "",
-      }));
-    } catch (error) {
-      console.error(`Error retrieving all users:`, error);
-      throw error;
-    }
+  async delete(id: number): Promise<boolean> {
+    const result = await this.repository.delete(id);
+    return result.affected != null && result.affected > 0;
   }
 }

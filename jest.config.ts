@@ -23,7 +23,6 @@ const config: Config = {
     "^@types$": "<rootDir>/src/utils/types/index.ts",
     "^@config/(.*)$": "<rootDir>/src/utils/shared/config/$1",
     "^@schemas$": "<rootDir>/src/utils/shared/schemas/index.ts",
-    "^@parsers/(.*)$": "<rootDir>/src/utils/shared/parsers/$1",
     "^types$": "<rootDir>/src/utils/types/index.ts",
   },
   collectCoverage: true,

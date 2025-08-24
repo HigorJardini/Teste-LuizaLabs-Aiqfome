@@ -1,9 +1,52 @@
 flowchart TD
-A[POST /upload] --> B[Recebe o arquivo texto]
-B --> C[Processa e normaliza os dados]
-C --> D[Salva em memória ou em arquivo]
-D --> E[GET /orders]
-E --> F[Retorna todos os pedidos normalizados]
-
-E -->|?order_id=123| G[Filtra por id do pedido]
-E -->|?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD| H[Filtra por intervalo de datas]
+    %% Authentication Flow
+    A[Client] --> B[POST /auth/register]
+    B --> C[Create UserLogin record]
+    C --> D[Create User record]
+    D --> E[Return success]
+    
+    A --> F[POST /auth/login]
+    F --> G[Validate credentials]
+    G --> H[Generate JWT token]
+    H --> I[Return token and user data]
+    
+    %% User Management Flow
+    A --> J[GET /me]
+    J --> K[Validate JWT token]
+    K --> L[Return user profile]
+    
+    A --> M[PUT /me]
+    M --> N[Validate JWT token]
+    N --> O[Update user data]
+    O --> P[Return updated user]
+    
+    A --> Q[DELETE /me]
+    Q --> R[Validate JWT token]
+    R --> S[Delete user account]
+    S --> T[Return success]
+    
+    %% Favorites Management Flow
+    A --> U[GET /favorites]
+    U --> V[Validate JWT token]
+    V --> W[Get user's favorites]
+    W --> X[Return favorites with product details]
+    
+    A --> Y[POST /favorites]
+    Y --> Z[Validate JWT token]
+    Z --> AA[Check if product exists in cache]
+    AA --> AB{Product in cache?}
+    AB -->|No| AC[Fetch from external API]
+    AC --> AD[Save to product cache]
+    AB -->|Yes| AE[Add to favorites]
+    AD --> AE
+    AE --> AF[Return success]
+    
+    A --> AG[DELETE /favorites/:productId]
+    AG --> AH[Validate JWT token]
+    AH --> AI[Remove from favorites]
+    AI --> AJ[Return success]
+    
+    A --> AK[GET /favorites/:productId]
+    AK --> AL[Validate JWT token]
+    AL --> AM[Get favorite product details]
+    AM --> AN[Return product details]

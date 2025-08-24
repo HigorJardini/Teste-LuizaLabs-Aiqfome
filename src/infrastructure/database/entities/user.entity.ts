@@ -1,20 +1,40 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { OrderTypeORMEntity } from "@database-entities";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  JoinColumn,
+  OneToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { UserLogin } from "@database-entities";
+import { FavoriteProduct } from "./favorite-product.entity";
 
 @Entity("users")
-export class UserTypeORMEntity {
-  @PrimaryGeneratedColumn({ name: "id" })
-  id?: number;
+export class User {
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-  @Column({ name: "user_id", type: "int" })
-  user_id?: number;
+  @Column()
+  name!: string;
 
-  @Column({ name: "name", type: "varchar", length: 255 })
-  name?: string;
+  @Column({ unique: true })
+  email!: string;
 
-  @OneToMany(
-    () => OrderTypeORMEntity,
-    (order: OrderTypeORMEntity) => order.user
-  )
-  orders?: OrderTypeORMEntity[];
+  @Column({ nullable: true })
+  login_id!: number;
+
+  @CreateDateColumn()
+  created_at!: Date;
+
+  @UpdateDateColumn()
+  updated_at!: Date;
+
+  @OneToOne(() => UserLogin)
+  @JoinColumn({ name: "login_id" })
+  login!: UserLogin;
+
+  @OneToMany(() => FavoriteProduct, (favorite) => favorite.user)
+  favorites!: FavoriteProduct[];
 }

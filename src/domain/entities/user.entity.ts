@@ -1,5 +1,8 @@
 export interface UserEntity {
   id?: number;
-  user_id: number;
   name: string;
+  email: string;
+  login_id?: number;
+  created_at?: Date;
+  updated_at?: Date;
 }

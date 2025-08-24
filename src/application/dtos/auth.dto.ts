@@ -2,6 +2,7 @@ export interface RegisterUserDTO {
   username: string;
   password: string;
   name: string;
+  email: string;
 }
 
 export interface LoginUserDTO {
@@ -12,6 +13,9 @@ export interface LoginUserDTO {
 export interface AuthResponseDTO {
   token: string;
   user: {
+    id: number;
+    name: string;
+    email: string;
     login_id: number;
     username: string;
     status: boolean;

@@ -7,22 +7,22 @@ import {
 } from "typeorm";
 
 @Entity("userlogins")
-export class UserLoginTypeORMEntity {
+export class UserLogin {
   @PrimaryGeneratedColumn({ name: "login_id", type: "bigint" })
-  login_id?: number;
+  login_id!: number;
 
   @Column({ name: "username", type: "varchar", length: 255 })
-  username?: string;
+  username!: string;
 
   @Column({ name: "password", type: "varchar", length: 255 })
-  password?: string;
+  password!: string;
 
   @Column({ name: "status", type: "boolean" })
-  status?: boolean;
+  status!: boolean;
 
   @CreateDateColumn({ name: "created_at" })
-  created_at?: Date;
+  created_at!: Date;
 
   @UpdateDateColumn({ name: "updated_at" })
-  updated_at?: Date;
+  updated_at!: Date;
 }

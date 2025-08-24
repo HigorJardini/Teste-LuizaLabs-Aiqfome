@@ -1,7 +1,12 @@
 import { FastifyInstance } from "fastify";
-import { testRoutes, authRoutes, uploadRoutes, orderRoutes } from "@routes";
+import {
+  testRoutes,
+  authRoutes,
+  userRoutes,
+  favoriteProductRoutes,
+} from "@routes";
 
-const allRoutes = [testRoutes, authRoutes, uploadRoutes, orderRoutes];
+const allRoutes = [testRoutes, authRoutes, userRoutes, favoriteProductRoutes];
 
 export async function registerRoutes(app: FastifyInstance) {
   for (const route of allRoutes) {

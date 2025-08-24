@@ -2,10 +2,10 @@ import "reflect-metadata";
 import Fastify, { FastifyInstance } from "fastify";
 import swagger from "@fastify/swagger";
 import swaggerUI from "@fastify/swagger-ui";
-import multipart from "@fastify/multipart";
 import { initializeDatabase } from "@database-connection";
 import { getEnv } from "@config/env";
 import { registerRoutes } from "@config/routes";
+import { errorHandler } from "@middlewares";
 
 const app: FastifyInstance = Fastify({
   logger: {
@@ -30,20 +30,11 @@ async function bootstrap() {
     await initializeDatabase();
     console.log("Database initialized successfully");
 
-    app.register(multipart, {
-      limits: {
-        fileSize: env.UPLOAD_FILE_SIZE_LIMIT,
-        files: env.UPLOAD_MAX_FILES,
-        fieldSize: env.UPLOAD_FIELD_SIZE,
-      },
-      attachFieldsToBody: false,
-    });
-
     await app.register(swagger, {
       openapi: {
         info: {
-          title: "API Projeto Teste LuizaLabs",
-          description: "Documentação gerada pelo Swagger",
+          title: "API Favorite Products",
+          description: "API for managing favorite products from external API",
           version: "1.0.0",
         },
         servers: [
@@ -72,6 +63,8 @@ async function bootstrap() {
       },
       staticCSP: true,
     });
+
+    app.setErrorHandler(errorHandler);
 
     await registerRoutes(app);
 

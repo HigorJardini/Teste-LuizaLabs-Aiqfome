@@ -1,3 +1,3 @@
 export * from "./auth.dto";
-export * from "./upload.dto";
-export * from "./order.dto";
+export * from "./user.dto";
+export * from "./favorite-product.dto";

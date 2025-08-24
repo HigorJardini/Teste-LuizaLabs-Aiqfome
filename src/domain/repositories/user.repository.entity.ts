@@ -1,8 +1,10 @@
 import { UserEntity } from "@entities";
 
 export interface UserRepository {
-  findById(user_id: number): Promise<UserEntity | null>;
+  findById(id: number): Promise<UserEntity | null>;
+  findByEmail(email: string): Promise<UserEntity | null>;
+  findByLoginId(login_id: number): Promise<UserEntity | null>;
   create(user: UserEntity): Promise<UserEntity>;
-  findByName(name: string): Promise<UserEntity[]>;
-  findByUserId(user_id: number, name?: string): Promise<UserEntity | null>;
+  update(id: number, user: Partial<UserEntity>): Promise<UserEntity>;
+  delete(id: number): Promise<boolean>;
 }
