@@ -128,7 +128,7 @@ To install the project, follow these steps:
       DB_PORT=5432
       DB_USERNAME=
       DB_PASSWORD=
-      DB_NAME=
+      DB_NAME=luizalabsaiqdb
       JWT_SECRET=secret_key
 
       #Test configuration
@@ -291,7 +291,7 @@ Para instalar o projeto, siga estas etapas:
       DB_PORT=5432
       DB_USERNAME=
       DB_PASSWORD=
-      DB_NAME=
+      DB_NAME=luizalabsaiqdb
       JWT_SECRET=secret_key
 
       #Test configuration
