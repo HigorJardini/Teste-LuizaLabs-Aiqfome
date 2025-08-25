@@ -162,7 +162,7 @@ To perform optional cleanup and avoid potential conflicts, you can run the follo
       - Removes `node_modules` and `dist` directories if they exist.
       - Prompts for confirmation to clean Docker cache using docker `system prune -f`.
       - Provides options for cleaning Docker images and volumes if needed.
-      - ![Docker Clear Option](./public/Docker-Clear-Option-Linux-Cmd.png)
+      - ![Docker Clear Option](./public/Docker-Clear-Option-Linux-Cmd-Command.png)
 - **Windows**:
   - You can use the provided `.bat` and `.ps1` scripts to clean and rebuild your Docker environment:
   1.  **Run the clean and build batch script**:
@@ -191,7 +191,7 @@ You can access Adminer for internal database management [here](http://localhost:
 
 - **API Testing with api.http**: You can view and test the API using the api.http file included in the project. This file contains predefined API requests that can be executed using the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension in VSCode. Make sure to install the [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extension to enable this functionality.
 
-![Api Http](./public/Api-Http.png)
+![Api Http](./public/Api-Http-Docs.png)
 
 ## 🇧🇷 Versão em Português
 
@@ -325,7 +325,7 @@ Para realizar limpeza opcional e evitar possíveis conflitos, você pode executa
       - Remove os diretórios `node_modules` e `dist`, se existirem.
       - Solicita confirmação para limpar o cache do Docker usando `docker system prune -f`.
       - Oferece opções para limpar imagens e volumes do Docker, se necessário.
-      - ![Opção de limpeza do Docker](./public/Docker-Clear-Option-Linux-Cmd.png)
+      - ![Opção de limpeza do Docker](./public/Docker-Clear-Option-Linux-Cmd-Command.png)
 - **Windows**:
   - Você pode usar os scripts `.bat` e `.ps1` fornecidos para limpar e reconstruir seu ambiente Docker:
   1.  **Execute o script de limpeza e construção em batch**:
@@ -354,4 +354,4 @@ Você pode acessar o Adminer para gerenciamento interno do banco de dados [aqui]
 
 - **Teste de API com api.http**: Você pode visualizar e testar a API usando o arquivo api.http incluído no projeto. Este arquivo contém requisições de API pré-definidas que podem ser executadas usando a extensão [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) no VSCode. Certifique-se de instalar a extensão [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) para habilitar essa funcionalidade.
 
-![Api Http](./public/Api-Http.png)
+![Api Http](./public/Api-Http-Docs.png)
